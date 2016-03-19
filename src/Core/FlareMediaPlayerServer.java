@@ -19,8 +19,8 @@ public class FlareMediaPlayerServer {
     private void run() {
         try {
             // Open a connection using the given port to accept incoming connections
-            serverSocket = new ServerSocket(6666);
-            System.out.println("Running server on port 6666");
+            serverSocket = new ServerSocket(6661);
+            System.out.println("Running server on port 6661");
 
             // Loop indefinitely to establish multiple connections
             while (running) {
