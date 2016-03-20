@@ -9,6 +9,6 @@ package Core;
  *
  * @author josesfval
  */
-public class VideoServer {
+public class VideoServerClient {
     
 }
