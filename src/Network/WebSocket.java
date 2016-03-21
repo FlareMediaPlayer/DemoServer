@@ -21,21 +21,20 @@ import org.apache.commons.codec.digest.DigestUtils;
  * @author mac
  */
 public class WebSocket extends Socket {
-    
+
     private String webSocketKey;
     private String GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     private String socketResponseKey;
-
 
     public WebSocket() throws IOException {
 
         super();
 
     }
-    
+
     //For now, later make a handshake protocol
-    public void handshake ()throws IOException{
-        
+    public void handshake() throws IOException {
+
         InputStream stream = getInputStream();
         BufferedReader in = new BufferedReader(new InputStreamReader(stream));
 
@@ -72,6 +71,9 @@ public class WebSocket extends Socket {
         writer.println("Sec-WebSocket-Accept: " + socketResponseKey);
 
         writer.println("");
+
+      
+
     }
 
 }

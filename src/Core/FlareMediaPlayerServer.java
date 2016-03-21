@@ -3,6 +3,8 @@ package Core;
 import Network.WebSocket;
 import Network.WebSocketServer;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -15,6 +17,7 @@ public class FlareMediaPlayerServer {
     private WebSocketServer serverSocket;
     private boolean running = true;
     private final ExecutorService threadPool;
+    private Map<String, FlareClient> clientThreads = new HashMap<String, FlareClient>(); // Session ID -> Client
 
 
 
@@ -42,6 +45,13 @@ public class FlareMediaPlayerServer {
                     // Accept the incoming connection from client
                     
                     WebSocket clientSocket = serverSocket.accept();
+                    String sessionToken = "asdasd"; //Put the actual token the client sent 
+                    
+                    FlareClient client = new FlareClient(sessionToken, clientSocket);
+                    
+                    addToActiveThreads(client);
+                    // Initiate the client
+                    threadPool.submit(client);
                  
                 
                     
@@ -57,6 +67,13 @@ public class FlareMediaPlayerServer {
     public void configure(){
         //Load configuration stuff here
     }
+    
+    public void addToActiveThreads(FlareClient client) {
+        
+        clientThreads.put(client.getId(), client);
+        
+    }
+
 
     public static FlareMediaPlayerServer getInstance() {
 

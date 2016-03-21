@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Network;
+package Core;
 
 /**
  *
- * @author josesfval
+ * @author mac
  */
-public class RequestConnection {
+class NetworkRecieve {
     
 }

@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Network;
+package Network.Send;
 
 /**
  *
- * @author josesfval
+ * @author mac
  */
-public class RequestResponse {
+public abstract class NetworkSend {
+    protected byte[] dataInBytes;  //Data to send
+    protected short sendCode;
+    
     
 }

@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Core;
+package Network;
 
 /**
  *
- * @author josesfval
+ * @author mac
  */
-public class VideoServerClient {
-    
+public class WebSocketParser {
+
+    public static int getBit(byte input, int position) {
+        return (input >> position) & 1;
+    }
+
 }
