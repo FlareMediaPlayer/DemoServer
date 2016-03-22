@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -61,7 +62,7 @@ public class FlareClient implements Runnable {
         while (running) {
             try {
 
-                c = dataInputStream.readByte();
+                c = dataInputStream.readByte(); 
      
                 opCode = c & 0x0f; 
                 System.out.println("is Final :" +WebSocketParser.getBit(c, 7));
@@ -89,6 +90,13 @@ public class FlareClient implements Runnable {
                 String test = new String(data);
                 System.out.println("Data is :" + test);
                 System.out.println();
+                
+                try{
+                String aMessage = "hello";
+                WebSocketParser.send(outputStream, aMessage.getBytes(StandardCharsets.US_ASCII));
+                }catch(Exception e){
+                    System.out.println("could not send message back");
+                }
  
           
 
