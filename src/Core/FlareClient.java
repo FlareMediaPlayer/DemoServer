@@ -55,7 +55,8 @@ public class FlareClient implements Runnable {
                 
 
                 WebSocketMessage message = clientSocket.getMessage();
-                System.out.println(message.getText());
+                System.out.println(message.getText() + "\n");
+                
                 
                 try{
                 String aMessage = "hello";

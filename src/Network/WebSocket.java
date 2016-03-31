@@ -13,11 +13,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -89,32 +92,25 @@ public class WebSocket extends Socket {
         
         opCode = (byte) (currentByte & 0x0f);
         
-        
-
-        
+    
         WebSocketFrameHandler frameHandler = null;
         WebSocketMessage message = null;
         
         
-       // Class frameClass = WebSocket.webSocketTable.get(opCode);
+        Class frameClass = WebSocket.webSocketTable.get(opCode);
         
-        
+      
             
+        try {
             
-            //frameHandler = (WebSocketFrameHandler) Class.forName("Network.WebSocket$ProcessTextFrame").newInstance();
-            frameHandler = new ProcessTextFrame();
-            
-            //frameHandler = (WebSocketFrameHandler) Class.forName("WebSocket$ProcessTextFrame").newInstance(); //ProcessTextFrame.class.newInstance();
-            System.out.println(frameHandler);
-            
+            frameHandler = (WebSocketFrameHandler) frameClass.getConstructor(WebSocket.class).newInstance(this);
             frameHandler.initialize(this, currentByte);
             message = frameHandler.process();
             
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+            Logger.getLogger(WebSocket.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-        
-        
-        
-
         return message;
 
     }
@@ -164,7 +160,7 @@ public class WebSocket extends Socket {
     /**
      * Private class for WebSocket Op Codes
      */
-    private static class OP_CODE {
+    public static class OP_CODE {
 
         public static final byte CONTINUATION = 0;
         public static final byte TEXT = 1;
@@ -183,10 +179,10 @@ public class WebSocket extends Socket {
 
             //table.put(OP_CODE.CONTINUATION, Class.forName("ProcessContinuationFrame"));
             table.put(OP_CODE.TEXT, ProcessTextFrame.class);
-            //table.put(OP_CODE.BINARY, Class.forName("ProcessBinaryFrame"));
-            //table.put(OP_CODE.CLOSE, Class.forName("ProcessCloseFrame"));
-            //table.put(OP_CODE.PING, Class.forName("ProcessPingFrame"));
-            //table.put(OP_CODE.PONG, Class.forName("ProcessPongFrame"));
+            table.put(OP_CODE.BINARY, ProcessBinaryFrame.class );
+            table.put(OP_CODE.CLOSE, ProcessCloseFrame.class );
+            table.put(OP_CODE.PING, ProcessPingFrame.class );
+            table.put(OP_CODE.PONG, ProcessPongFrame.class );
 
         } catch (Exception e) {
             
@@ -219,9 +215,13 @@ public class WebSocket extends Socket {
         int dataLength;
 
         int maskBit;
+        
+        public WebSocketFrameHandler(){
+            
+        }
 
         public void initialize(WebSocket _webSocket, byte _initializerByte) throws IOException {
-            System.out.println("initializing");
+            
             initialByte = _initializerByte;
             opCode = (byte) (_initializerByte & 0x0f);
             webSocket = _webSocket;
@@ -249,7 +249,7 @@ public class WebSocket extends Socket {
     public class ProcessTextFrame extends WebSocketFrameHandler {
         
         public ProcessTextFrame(){
-            
+            super();
         }
 
         public WebSocketMessage process() throws IOException {
@@ -288,7 +288,7 @@ public class WebSocket extends Socket {
         }
     }
 
-    private class ProcessBinaryFrame extends WebSocketFrameHandler {
+    public class ProcessBinaryFrame extends WebSocketFrameHandler {
 
         public WebSocketMessage process() {
 
@@ -296,7 +296,7 @@ public class WebSocket extends Socket {
         }
     }
 
-    private class ProcessCloseFrame extends WebSocketFrameHandler {
+    public class ProcessCloseFrame extends WebSocketFrameHandler {
 
         public WebSocketMessage process() {
 
@@ -304,7 +304,7 @@ public class WebSocket extends Socket {
         }
     }
 
-    private class ProcessPingFrame extends WebSocketFrameHandler {
+    public class ProcessPingFrame extends WebSocketFrameHandler {
 
         public WebSocketMessage process() {
 
@@ -312,7 +312,7 @@ public class WebSocket extends Socket {
         }
     }
 
-    private class ProcessPongFrame extends WebSocketFrameHandler {
+    public class ProcessPongFrame extends WebSocketFrameHandler {
 
         public WebSocketMessage process() {
 
