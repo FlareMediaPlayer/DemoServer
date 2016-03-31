@@ -6,19 +6,16 @@
 package Core;
 
 import Network.WebSocket;
+import Network.WebSocketMessage;
 import Network.WebSocketParser;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+
 
 /**
  *
@@ -52,44 +49,13 @@ public class FlareClient implements Runnable {
 
     @Override
     public void run() {
-        byte c;
-        int opCode;
-        byte mask[] = new byte[4];
-        byte data[];
-        int dataLength;
-        int maskBit;
         
         while (running) {
             try {
+                
 
-                c = dataInputStream.readByte(); 
-     
-                opCode = c & 0x0f; 
-                System.out.println("is Final :" +WebSocketParser.getBit(c, 7));
-                System.out.println("Op Code: "+ opCode);
-                
-                c = dataInputStream.readByte();
-                maskBit = (c >> 7) & 0x1;
-                
-                dataLength = c & 0x7f;
-                System.out.println("Mask Bit is :" + maskBit);
-                System.out.println("Data Length is :" + dataLength);
-                
-                
-                mask[0] = dataInputStream.readByte();
-                mask[1] = dataInputStream.readByte();
-                mask[2] = dataInputStream.readByte();
-                mask[3] = dataInputStream.readByte();
-                
-                data = new byte[dataLength];
-                int maskIndex;
-                for(int n = 0; n < dataLength; n++){
-                    maskIndex = n % 4;
-                    data[n] = (byte) (dataInputStream.readByte() ^ mask[maskIndex]);
-                }
-                String test = new String(data);
-                System.out.println("Data is :" + test);
-                System.out.println();
+                WebSocketMessage message = clientSocket.getMessage();
+                System.out.println(message.getText());
                 
                 try{
                 String aMessage = "hello";
@@ -100,7 +66,7 @@ public class FlareClient implements Runnable {
  
           
 
-            } catch (Exception e) {
+            } catch (IOException e) {
 
             }
 

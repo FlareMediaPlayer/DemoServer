@@ -45,6 +45,9 @@ public class FlareMediaPlayerServer {
                     // Accept the incoming connection from client
                     
                     WebSocket clientSocket = serverSocket.accept();
+                    
+                    
+                    
                     String sessionToken = "asdasd"; //Put the actual token the client sent 
                     
                     FlareClient client = new FlareClient(sessionToken, clientSocket);

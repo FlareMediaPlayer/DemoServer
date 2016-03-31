@@ -23,11 +23,16 @@ public class WebSocketServer extends ServerSocket {
 
     public WebSocket accept() throws IOException {
         
-        WebSocket webSocket = new WebSocket();
+        WebSocket webSocket = WebSocket.create();
+        
         implAccept(webSocket);
         
         //Perform the websocket handshake response
         webSocket.handshake();
+        
+      
+        webSocket.initialize();   
+       
         
         return webSocket;
     }
