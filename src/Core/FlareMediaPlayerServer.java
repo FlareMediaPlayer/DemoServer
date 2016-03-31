@@ -1,7 +1,7 @@
 package Core;
 
-import Network.WebSocket;
-import Network.WebSocketServer;
+import WebSocket.WebSocket;
+import WebSocket.WebSocketServer;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

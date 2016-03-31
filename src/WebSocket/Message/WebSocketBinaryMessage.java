@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Network.Send;
+package WebSocket.Message;
 
 /**
  *
  * @author mac
  */
-public abstract class NetworkSend {
-    protected byte[] dataInBytes;  //Data to send
-    protected short sendCode;
+public class WebSocketBinaryMessage extends WebSocketMessage{
     
+    byte[] data;
     
 }

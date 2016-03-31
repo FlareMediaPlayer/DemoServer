@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Network;
+package WebSocket;
 
+import WebSocket.Message.WebSocketMessage;
+import WebSocket.Message.WebSocketTextMessage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -237,11 +239,11 @@ public class WebSocket extends Socket {
 
     }
 
-    private class ProcessContinuationFrame extends WebSocketFrameHandler {
+    public class ProcessContinuationFrame extends WebSocketFrameHandler {
 
         public WebSocketMessage process() {
 
-            return new WebSocketMessage();
+            return new WebSocketTextMessage();
         }
 
     }
@@ -281,7 +283,8 @@ public class WebSocket extends Socket {
             //System.out.println(textMessage);
 
             
-            WebSocketMessage message = new WebSocketMessage();
+            WebSocketTextMessage message = new WebSocketTextMessage();
+            message.setOpcode(opCode);
             message.setText(textMessage);
 
             return message;
@@ -292,7 +295,7 @@ public class WebSocket extends Socket {
 
         public WebSocketMessage process() {
 
-            return new WebSocketMessage();
+            return new WebSocketTextMessage();
         }
     }
 
@@ -300,7 +303,7 @@ public class WebSocket extends Socket {
 
         public WebSocketMessage process() {
 
-            return new WebSocketMessage();
+            return new WebSocketTextMessage();
         }
     }
 
@@ -308,7 +311,7 @@ public class WebSocket extends Socket {
 
         public WebSocketMessage process() {
 
-            return new WebSocketMessage();
+            return new WebSocketTextMessage();
         }
     }
 
@@ -316,7 +319,7 @@ public class WebSocket extends Socket {
 
         public WebSocketMessage process() {
 
-            return new WebSocketMessage();
+            return new WebSocketTextMessage();
         }
     }
 
