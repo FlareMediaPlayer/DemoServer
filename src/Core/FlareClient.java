@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  *
  * @author josesfval
@@ -133,7 +134,8 @@ public class FlareClient implements Runnable {
             System.out.println(((WebSocketTextMessage) message).getText() + "\n");
             
             try {
-                    String aMessage = "hello";
+                
+                    String aMessage = "{\"test\"  : \"hello\" }";
                     WebSocketParser.send(FlareClient.this.outputStream, aMessage.getBytes(StandardCharsets.US_ASCII));
                 } catch (Exception e) {
                     System.out.println("could not send message back");

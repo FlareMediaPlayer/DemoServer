@@ -83,6 +83,10 @@ public class WebSocket extends Socket {
         
 
     }
+    
+    public void sendTextData(String text) throws IOException {
+
+    }
 
     public void sendData(byte[] data) throws IOException {
 
