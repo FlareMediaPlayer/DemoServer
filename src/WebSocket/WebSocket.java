@@ -296,7 +296,7 @@ public class WebSocket extends Socket {
         public WebSocketMessage process() throws IOException {
             
             
-            System.out.println("is Final :" + WebSocketParser.getBit(initialByte, 7));
+            System.out.println("is Final :" + WebSocket.getBit(initialByte, 7));
             System.out.println("Op Code: " + opCode);
 
             //Dont forget to handle isFinal bit
@@ -360,6 +360,16 @@ public class WebSocket extends Socket {
 
             return new WebSocketTextMessage();
         }
+    }
+    
+    /**
+     * For testing
+     * @param input
+     * @param position
+     * @return 
+     */
+    public static int getBit(byte input, int position) {
+        return (input >> position) & 1;
     }
 
 

@@ -8,7 +8,6 @@ package Core;
 import WebSocket.WebSocket;
 import WebSocket.Message.WebSocketMessage;
 import WebSocket.Message.WebSocketTextMessage;
-import WebSocket.WebSocketParser;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
