@@ -98,7 +98,9 @@ public class WebSocket extends Socket {
             
             outputStream.write((byte)  0x7e); //Set to 256 to use next 2 bytes
             //Write bottom 16 bits as message length use 2 bytes as length 
-            outputStream.write((short) messageLength & 0xFFFF);
+            ByteBuffer payloadLengthbuffer = ByteBuffer.allocate(Short.BYTES);
+            payloadLengthbuffer.putShort((short) (messageLength & 0xffff));            
+            outputStream.write(payloadLengthbuffer.array());
             
         }else {
             
@@ -136,8 +138,10 @@ public class WebSocket extends Socket {
             System.out.println("this");
             outputStream.write((byte) 0x7e); //Set to 126 to use next 2 bytes
             //Write bottom 16 bits as message length use 2 bytes as length 
-            outputStream.write((messageLength & 0xffff));
-            System.out.println(messageLength & 0xffff);
+            ByteBuffer payloadLengthbuffer = ByteBuffer.allocate(Short.BYTES);
+            payloadLengthbuffer.putShort((short) (messageLength & 0xffff));            
+            outputStream.write(payloadLengthbuffer.array());
+
             
         }else {
             

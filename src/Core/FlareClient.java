@@ -152,7 +152,7 @@ public class FlareClient implements Runnable {
                     
                     //byte[] hello = aMessage.getBytes(StandardCharsets.US_ASCII);
                     //new byte[65535]
-                    FlareClient.this.clientSocket.sendBinaryData(new byte[65537] );
+                    FlareClient.this.clientSocket.sendBinaryData(new byte[65535] );
                     
                     System.out.println("ds");
                     
