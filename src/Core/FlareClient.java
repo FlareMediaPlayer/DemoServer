@@ -136,9 +136,11 @@ public class FlareClient implements Runnable {
             try {
                 
                     String aMessage = "{\"test\"  : \"hello\" }";
-                    WebSocketParser.send(FlareClient.this.outputStream, aMessage.getBytes(StandardCharsets.US_ASCII));
+                    
+                    FlareClient.this.clientSocket.sendTextData(aMessage);
+                    
                 } catch (Exception e) {
-                    System.out.println("could not send message back");
+                    System.out.println(e.getMessage());
                 }
             
         }

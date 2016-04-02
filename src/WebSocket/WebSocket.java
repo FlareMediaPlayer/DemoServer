@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,12 +86,46 @@ public class WebSocket extends Socket {
     }
     
     public void sendTextData(String text) throws IOException {
-
+        
+        byte[] binaryText = text.getBytes(StandardCharsets.US_ASCII);
+        int messageLength = binaryText.length;
+        
+        
+        byte isFinal = (byte) (1 << 7);
+        byte firstHeader = (byte) (WebSocket.OP_CODE.TEXT | (byte)isFinal);
+        outputStream.write(firstHeader);
+        
+        //Don't need to worry about mask bit, will allways be 0.
+        
+        if(messageLength < 126){
+            
+            outputStream.write((byte) messageLength);
+            
+        }else if (messageLength < 65536 ){
+            
+            outputStream.write((byte) 256); //Set to 256 to use next 2 bytes
+            //Write bottom 16 bits as message length use 2 bytes as length 
+            outputStream.write((short) messageLength & 0xFFFF);
+            
+        }else {
+            
+            outputStream.write((byte) 257); //set to 8 for 64 bit unsigned number    
+            //Only need 32 bits as length, but still has to be 64 bits long
+            outputStream.write((int) 0 );       //We wont use the first 4 bytes anyway since max array length is 2^31
+            outputStream.write(messageLength );
+            
+        }
+        
+        //Finally Write the data
+        outputStream.write(binaryText);
+    
     }
+    
 
     public void sendData(byte[] data) throws IOException {
 
     }
+    
 
     public WebSocketMessage getMessage() throws IOException{
         
