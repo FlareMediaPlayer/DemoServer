@@ -121,7 +121,7 @@ public class WebSocket extends Socket {
     public void sendBinaryData(byte[] data) throws IOException {
        
         int messageLength = data.length;
-        System.out.println(messageLength);
+ 
         
         
         byte isFinal = (byte) (1 << 7);
@@ -135,7 +135,7 @@ public class WebSocket extends Socket {
             outputStream.write((byte) messageLength);
             
         }else if (messageLength < 65536 ){
-            System.out.println("this");
+            
             outputStream.write((byte) 0x7e); //Set to 126 to use next 2 bytes
             //Write bottom 16 bits as message length use 2 bytes as length 
             ByteBuffer payloadLengthbuffer = ByteBuffer.allocate(Short.BYTES);
@@ -336,8 +336,8 @@ public class WebSocket extends Socket {
             maskBit = (currentByte >> 7) & 0x1;
 
             dataLength = currentByte & 0x7f;
-            System.out.println("Mask Bit is :" + maskBit);
-            System.out.println("Data Length is :" + dataLength);
+            //System.out.println("Mask Bit is :" + maskBit);
+            //System.out.println("Data Length is :" + dataLength);
 
             mask[0] = dataInputStream.readByte();
             mask[1] = dataInputStream.readByte();

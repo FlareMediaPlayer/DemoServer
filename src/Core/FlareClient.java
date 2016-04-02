@@ -28,6 +28,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 
 /**
  *
@@ -136,13 +141,35 @@ public class FlareClient implements Runnable {
         
         //Put all logic for handling a text message in here.
         public void process(){
+            
+    
             //TEMPORARY TO TRY TO SEND IMAGE AND JSON
+            JSONParser parser = new JSONParser();
             System.out.println(((WebSocketTextMessage) message).getText() + "\n");
             BufferedImage img = null;
+            String test = "asd";
+            
+            try {
+                
+                Object obj = parser.parse( ((WebSocketTextMessage) message).getText() );
+                JSONObject jsonObject = (JSONObject) obj;
+                
+                if(jsonObject.containsKey("opCode")){
+                    System.out.println(jsonObject.get("opCode"));
+                    //make sure that data is okay then add to process queue
+                    
+                }else{
+                    System.out.println("message is suspisious, drop the client");
+                }
+                
+                
+            } catch (ParseException ex) {
+                Logger.getLogger(FlareClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
         
             try {
                     
-                    String aMessage = "{\"test\"  : \"hellos\" }";
+                    String aMessage = "{\"videoData\"  : \"hellos\" }";
                     
                     //FlareClient.this.clientSocket.sendTextData(aMessage);
                     //img = ImageIO.read(new File("testVideo/frame000.jpg"));
@@ -152,9 +179,8 @@ public class FlareClient implements Runnable {
                     
                     //byte[] hello = aMessage.getBytes(StandardCharsets.US_ASCII);
                     //new byte[65535]
-                    FlareClient.this.clientSocket.sendBinaryData(new byte[65535] );
-                    
-                    System.out.println("ds");
+                    //FlareClient.this.clientSocket.sendBinaryData(new byte[65535] );
+            
                     
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
