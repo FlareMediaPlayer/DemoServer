@@ -8,19 +8,25 @@ package Core;
 import WebSocket.WebSocket;
 import WebSocket.Message.WebSocketMessage;
 import WebSocket.Message.WebSocketTextMessage;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 
 /**
@@ -130,21 +136,33 @@ public class FlareClient implements Runnable {
         
         //Put all logic for handling a text message in here.
         public void process(){
+            //TEMPORARY TO TRY TO SEND IMAGE AND JSON
             System.out.println(((WebSocketTextMessage) message).getText() + "\n");
-            
+            BufferedImage img = null;
+        
             try {
-                
-                    String aMessage = "{\"test\"  : \"hello\" }";
                     
-                    FlareClient.this.clientSocket.sendTextData(aMessage);
+                    String aMessage = "{\"test\"  : \"hellos\" }";
+                    
+                    //FlareClient.this.clientSocket.sendTextData(aMessage);
+                    //img = ImageIO.read(new File("testVideo/frame000.jpg"));
+                    //img = ImageIO.read(new File("Lab.png"));
+                    //byte[] imgBytes = Files.readAllBytes(new File("testVideo/frame000.jpg").toPath());
+                    byte[] imgBytes = Files.readAllBytes(new File("Lab.png").toPath());
+                    
+                    //byte[] hello = aMessage.getBytes(StandardCharsets.US_ASCII);
+                    FlareClient.this.clientSocket.sendBinaryData(  new byte[65537]);
+                    
+                    
                     
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
+                    e.printStackTrace();
                 }
             
         }
         
-        
+        //END TESTING
     }
     
     public class BinaryMessageHandler extends WebSocketMessageHandler{
