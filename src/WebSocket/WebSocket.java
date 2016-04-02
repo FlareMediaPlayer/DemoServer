@@ -133,10 +133,11 @@ public class WebSocket extends Socket {
             outputStream.write((byte) messageLength);
             
         }else if (messageLength < 65536 ){
-            
+            System.out.println("this");
             outputStream.write((byte) 0x7e); //Set to 126 to use next 2 bytes
             //Write bottom 16 bits as message length use 2 bytes as length 
-            outputStream.write((short) messageLength & 0xFFFF);
+            outputStream.write((messageLength & 0xffff));
+            System.out.println(messageLength & 0xffff);
             
         }else {
             

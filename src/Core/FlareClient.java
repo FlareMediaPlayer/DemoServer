@@ -148,12 +148,13 @@ public class FlareClient implements Runnable {
                     //img = ImageIO.read(new File("testVideo/frame000.jpg"));
                     //img = ImageIO.read(new File("Lab.png"));
                     //byte[] imgBytes = Files.readAllBytes(new File("testVideo/frame000.jpg").toPath());
-                    byte[] imgBytes = Files.readAllBytes(new File("Lab.png").toPath());
+                    //byte[] imgBytes = Files.readAllBytes(new File("Lab.png").toPath());
                     
                     //byte[] hello = aMessage.getBytes(StandardCharsets.US_ASCII);
-                    FlareClient.this.clientSocket.sendBinaryData(  new byte[65537]);
+                    //new byte[65535]
+                    FlareClient.this.clientSocket.sendBinaryData(new byte[65537] );
                     
-                    
+                    System.out.println("ds");
                     
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
