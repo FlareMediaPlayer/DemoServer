@@ -23,6 +23,10 @@ public class FlareMediaPlayerServer {
 
     // Singleton Instance
     private static FlareMediaPlayerServer mediaServer;
+    //BufferedImage
+    /**
+     * For now
+     */
 
     
     public FlareMediaPlayerServer(){

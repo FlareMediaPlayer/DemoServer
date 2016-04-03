@@ -83,6 +83,10 @@ public class FlareClient implements Runnable {
         outputStream = clientSocket.getOutputStream();
         dataInputStream = new DataInputStream(inputStream);
         in = new BufferedReader(new InputStreamReader(inputStream));
+        
+        /**
+         * Make an array of images
+         */
 
     }
 
@@ -174,12 +178,15 @@ public class FlareClient implements Runnable {
                     //FlareClient.this.clientSocket.sendTextData(aMessage);
                     //img = ImageIO.read(new File("testVideo/frame000.jpg"));
                     //img = ImageIO.read(new File("Lab.png"));
-                    //byte[] imgBytes = Files.readAllBytes(new File("testVideo/frame000.jpg").toPath());
+                    
+                    
+                    //PUT AN ACTUAL IMAGE YOU HAVE ON YOUR COMPUTER HERE
+                    byte[] imgBytes = Files.readAllBytes(new File("testBmp/SampleVideo_1280x720_2mb000.bmp").toPath());
                     //byte[] imgBytes = Files.readAllBytes(new File("Lab.png").toPath());
                     
                     //byte[] hello = aMessage.getBytes(StandardCharsets.US_ASCII);
                     //new byte[65535]
-                    //FlareClient.this.clientSocket.sendBinaryData(new byte[65535] );
+                    FlareClient.this.clientSocket.sendBinaryData(imgBytes);
             
                     
                 } catch (Exception e) {
