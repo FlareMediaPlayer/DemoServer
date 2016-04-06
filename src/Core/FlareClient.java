@@ -5,6 +5,10 @@
  */
 package Core;
 
+import TaskManagement.FlareOpCode;
+import TaskManagement.Task;
+import TaskManagement.TaskTable;
+import Video.VideoManager;
 import WebSocket.WebSocket;
 import WebSocket.Message.WebSocketMessage;
 import WebSocket.Message.WebSocketTextMessage;
@@ -24,6 +28,7 @@ import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -48,6 +53,10 @@ public class FlareClient implements Runnable {
     private DataInputStream dataInputStream;
     private boolean running = true;
     BufferedReader in;
+    private Queue<Task> taskeQueue;
+    
+    //Keep a map of active video managers for each client (each client can have more than one video per page)
+    private Map<Integer, VideoManager> videoManagers;
     
     
     //This is our table to look up handlers for each WebSocketMessage
@@ -94,6 +103,13 @@ public class FlareClient implements Runnable {
         return sessionId;
     }
 
+    public void sendBinaryData(byte[] data) throws IOException{
+        System.out.println("data length is  " +  data.length);
+        clientSocket.sendBinaryData(data);
+        
+    }
+            
+            
     @Override
     public void run() {
 
@@ -105,7 +121,7 @@ public class FlareClient implements Runnable {
                 Class messageClass = FlareClient.messageTable.get(message.getOpcode());
                 
                 try {
-
+                    
                     messageHandler = (FlareClient.WebSocketMessageHandler) messageClass.getConstructor(FlareClient.class).newInstance(this);
                     messageHandler.initialize(message);
                     messageHandler.process();
@@ -124,6 +140,14 @@ public class FlareClient implements Runnable {
             }
 
         }
+    }
+    
+    private void addVideoManager(){
+        
+        int videoManagerId = 0;//videoManagers.size();
+            
+        videoManagers.put(videoManagerId, new VideoManager(this));
+
     }
     
     
@@ -146,7 +170,19 @@ public class FlareClient implements Runnable {
         //Put all logic for handling a text message in here.
         public void process(){
             
-    
+            try {
+                
+                Task task = (Task) TaskTable.taskTable.get(FlareOpCode.OPEN_VIDEO).newInstance();
+                task.setMessage(message);
+                task.setFlareClient(FlareClient.this);
+                task.process();
+                
+            } catch (InstantiationException | IllegalAccessException ex) {
+                Logger.getLogger(FlareClient.class.getName()).log(Level.SEVERE, null, ex);
+                
+                //Invalid task op code
+            }
+            
             //TEMPORARY TO TRY TO SEND IMAGE AND JSON
             JSONParser parser = new JSONParser();
             System.out.println(((WebSocketTextMessage) message).getText() + "\n");
@@ -170,7 +206,7 @@ public class FlareClient implements Runnable {
             } catch (ParseException ex) {
                 Logger.getLogger(FlareClient.class.getName()).log(Level.SEVERE, null, ex);
             }
-        
+        /*
             try {
                     
                     String aMessage = "{\"videoData\"  : \"hellos\" }";
@@ -193,7 +229,7 @@ public class FlareClient implements Runnable {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
-            
+            */
         }
         
         //END TESTING
