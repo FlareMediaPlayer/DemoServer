@@ -11,6 +11,15 @@ package WebSocket.Message;
  */
 public class WebSocketBinaryMessage extends WebSocketMessage{
     
-    byte[] data;
+    private byte[] data;
     
+    public byte[] getData(){
+        return data;
+    }
+    
+    public void setData(byte[] data){
+        
+        this.data = data;
+        
+    }
 }

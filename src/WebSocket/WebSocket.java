@@ -5,6 +5,7 @@
  */
 package WebSocket;
 
+import WebSocket.Message.WebSocketBinaryMessage;
 import WebSocket.Message.WebSocketMessage;
 import WebSocket.Message.WebSocketTextMessage;
 import java.io.BufferedOutputStream;
@@ -363,10 +364,41 @@ public class WebSocket extends Socket {
 
     public class ProcessBinaryFrame extends WebSocketFrameHandler {
 
-        public WebSocketMessage process() {
+        public WebSocketMessage process() throws IOException {
+            
+            
+            //System.out.println("is Final :" + WebSocket.getBit(initialByte, 7));
+            //System.out.println("Op Code: " + opCode);
 
-            return new WebSocketTextMessage();
+            //Dont forget to handle isFinal bit
+            currentByte = dataInputStream.readByte();
+            maskBit = (currentByte >> 7) & 0x1;
+
+            dataLength = currentByte & 0x7f;
+            //System.out.println("Mask Bit is :" + maskBit);
+            //System.out.println("Data Length is :" + dataLength);
+
+            mask[0] = dataInputStream.readByte();
+            mask[1] = dataInputStream.readByte();
+            mask[2] = dataInputStream.readByte();
+            mask[3] = dataInputStream.readByte();
+
+            data = new byte[dataLength];
+            int maskIndex;
+            for (int n = 0; n < dataLength; n++) {
+                maskIndex = n % 4;
+                data[n] = (byte) (dataInputStream.readByte() ^ mask[maskIndex]);
+            }
+            //String textMessage = new String(data);
+
+            
+            WebSocketBinaryMessage message = new WebSocketBinaryMessage();
+            message.setOpcode(opCode);
+            message.setData(data);
+
+            return message;
         }
+        
     }
 
     public class ProcessCloseFrame extends WebSocketFrameHandler {

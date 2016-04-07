@@ -5,10 +5,11 @@
  */
 package Core;
 
-import TaskManagement.FlareOpCode;
-import TaskManagement.Task;
-import TaskManagement.TaskTable;
+import FlareProtocol.FlareOpCode;
+import FlareTask.FlareTask;
+import FlareProtocol.TaskTable;
 import Video.VideoManager;
+import WebSocket.Message.WebSocketBinaryMessage;
 import WebSocket.WebSocket;
 import WebSocket.Message.WebSocketMessage;
 import WebSocket.Message.WebSocketTextMessage;
@@ -53,7 +54,7 @@ public class FlareClient implements Runnable {
     private DataInputStream dataInputStream;
     private boolean running = true;
     BufferedReader in;
-    private Queue<Task> taskeQueue;
+    private Queue<FlareTask> taskeQueue;
     
     //Keep a map of active video managers for each client (each client can have more than one video per page)
     private Map<Integer, VideoManager> videoManagers;
@@ -169,10 +170,10 @@ public class FlareClient implements Runnable {
         
         //Put all logic for handling a text message in here.
         public void process(){
-            
+            /*
             try {
                 
-                Task task = (Task) TaskTable.taskTable.get(FlareOpCode.OPEN_VIDEO).newInstance();
+                FlareTask task = (FlareTask) TaskTable.taskTable.get(FlareOpCode.OPEN_VIDEO).newInstance();
                 task.setMessage(message);
                 task.setFlareClient(FlareClient.this);
                 task.process();
@@ -182,8 +183,9 @@ public class FlareClient implements Runnable {
                 
                 //Invalid task op code
             }
-            
+            */
             //TEMPORARY TO TRY TO SEND IMAGE AND JSON
+            /*
             JSONParser parser = new JSONParser();
             System.out.println(((WebSocketTextMessage) message).getText() + "\n");
             BufferedImage img = null;
@@ -206,6 +208,7 @@ public class FlareClient implements Runnable {
             } catch (ParseException ex) {
                 Logger.getLogger(FlareClient.class.getName()).log(Level.SEVERE, null, ex);
             }
+            */
         /*
             try {
                     
@@ -235,13 +238,33 @@ public class FlareClient implements Runnable {
         //END TESTING
     }
     
-    public class BinaryMessageHandler extends WebSocketMessageHandler{
-        
+    public class BinaryMessageHandler extends WebSocketMessageHandler {
+
         //Put all logic for handling a binary message here
-        public void process(){
-          
+        public void process() {
+            
+            //System.out.println();
+            byte flareOpCode = ((WebSocketBinaryMessage)message).getData()[0];
+            System.out.println("flare op code is + " + flareOpCode);
+            
+            
+            
+
+            try {
+
+                FlareTask task = (FlareTask) TaskTable.taskTable.get(flareOpCode).newInstance();
+                task.setMessage(message);
+                task.setFlareClient(FlareClient.this);
+                task.process();
+
+            } catch (InstantiationException | IllegalAccessException ex) {
+                Logger.getLogger(FlareClient.class.getName()).log(Level.SEVERE, null, ex);
+
+                //Invalid task op code
+            }
+
         }
-        
+
     }
     
     

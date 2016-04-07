@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package TaskManagement;
+package FlareProtocol;
 
+import FlareProtocol.FlareOpCode;
 import Core.FlareClient;
+import FlareTask.OpenVideoTask;
 import WebSocket.WebSocket;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +29,7 @@ public class TaskTable {
         try {
 
 
-            table.put(FlareOpCode.OPEN_VIDEO, OpenVideoTaskHandler.class);
+            table.put(FlareOpCode.OPEN_VIDEO, OpenVideoTask.class);
 
 
         } catch (Exception e) {

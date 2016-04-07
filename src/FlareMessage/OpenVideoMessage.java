@@ -5,6 +5,8 @@
  */
 package FlareMessage;
 
+import FlareProtocol.FlareOpCode;
+
 /**
  *
  * @author mac
@@ -13,9 +15,11 @@ public class OpenVideoMessage extends FlareMessage{
     
     boolean videoIsAvailable;
 
+    
     public OpenVideoMessage() {
         
-        this.videoIsAvailable = false;
+        videoIsAvailable = false;
+        flareOpCode = FlareOpCode.OPEN_VIDEO;
         
     }
     
@@ -45,11 +49,23 @@ public class OpenVideoMessage extends FlareMessage{
            
            //Followed by (byte) 0
            data[5] = 0;
-           System.out.println(data[5]);
+           //System.out.println(data[5]);
            
            
            
        }else{
+           
+           dataLength = 1;
+           messageLength =  dataLength + HEADER_LENGTH;
+           data = new byte[messageLength];
+           
+           
+           data[0] = flareOpCode;
+           //Put Message Length
+           FlareMessage.intToData(data, 1, dataLength);
+           
+           //Followed by (byte) 0
+           data[5] = 1;
            
        }
        

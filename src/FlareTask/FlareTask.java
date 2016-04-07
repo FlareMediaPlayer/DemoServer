@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package TaskManagement;
+package FlareTask;
 
 
 
@@ -14,9 +14,11 @@ import WebSocket.Message.WebSocketMessage;
  *
  * @author mac
  */
-public abstract class Task {
+public abstract class FlareTask {
     
     protected WebSocketMessage message;
+    
+    protected int dataLength;
     
     protected FlareClient flareClient;
     
