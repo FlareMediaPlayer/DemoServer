@@ -34,10 +34,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 
 /**
@@ -170,69 +166,7 @@ public class FlareClient implements Runnable {
         
         //Put all logic for handling a text message in here.
         public void process(){
-            /*
-            try {
-                
-                FlareTask task = (FlareTask) TaskTable.taskTable.get(FlareOpCode.OPEN_VIDEO).newInstance();
-                task.setMessage(message);
-                task.setFlareClient(FlareClient.this);
-                task.process();
-                
-            } catch (InstantiationException | IllegalAccessException ex) {
-                Logger.getLogger(FlareClient.class.getName()).log(Level.SEVERE, null, ex);
-                
-                //Invalid task op code
-            }
-            */
-            //TEMPORARY TO TRY TO SEND IMAGE AND JSON
-            /*
-            JSONParser parser = new JSONParser();
-            System.out.println(((WebSocketTextMessage) message).getText() + "\n");
-            BufferedImage img = null;
-            String test = "asd";
-            
-            try {
-                
-                Object obj = parser.parse( ((WebSocketTextMessage) message).getText() );
-                JSONObject jsonObject = (JSONObject) obj;
-                
-                if(jsonObject.containsKey("opCode")){
-                    System.out.println(jsonObject.get("opCode"));
-                    //make sure that data is okay then add to process queue
-                    
-                }else{
-                    System.out.println("message is suspisious, drop the client");
-                }
-                
-                
-            } catch (ParseException ex) {
-                Logger.getLogger(FlareClient.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            */
-        /*
-            try {
-                    
-                    String aMessage = "{\"videoData\"  : \"hellos\" }";
-                    
-                    //FlareClient.this.clientSocket.sendTextData(aMessage);
-                    //img = ImageIO.read(new File("testVideo/frame000.jpg"));
-                    //img = ImageIO.read(new File("Lab.png"));
-                    
-                    
-                    //PUT AN ACTUAL IMAGE YOU HAVE ON YOUR COMPUTER HERE
-                    byte[] imgBytes = Files.readAllBytes(new File("testBmp/SampleVideo_1280x720_2mb000.bmp").toPath());
-                    //byte[] imgBytes = Files.readAllBytes(new File("Lab.png").toPath());
-                    
-                    //byte[] hello = aMessage.getBytes(StandardCharsets.US_ASCII);
-                    //new byte[65535]
-                    FlareClient.this.clientSocket.sendBinaryData(imgBytes);
-            
-                    
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    e.printStackTrace();
-                }
-            */
+            //Do Nothing, not using text 
         }
         
         //END TESTING
