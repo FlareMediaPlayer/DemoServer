@@ -118,7 +118,7 @@ public class VideoParser implements Comparator<Frame>{
                     verifyMe = new Frame(p,i);
                     
                     returningList.add(verifyMe);
-                    realFrameList.addAll(i+1, returningList);
+                    returningList.addAll(realFrameList.subList(i+1, realFrameList.size()));
                     
                     break;
                     
