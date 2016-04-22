@@ -36,7 +36,7 @@ public class FrameTransmission {
      * In the method onOpen, we'll let the user know that the handshake was 
      * successful.
      */
-    public Frame FrameToSend() throws IOException, JCodecException
+    public Frame getVideoFrame() throws IOException, JCodecException
     {
     	/*VideoParser vp = new VideoParser(new File("C:\\Users\\Tai\\Downloads\\FlareVideoParser\\FlareVideoParser\\bunny.mp4"));
     	ArrayList <Frame>  al = vp.getAllFrames();
@@ -75,9 +75,9 @@ public class FrameTransmission {
     public void onMessage(String message, Session session) throws JCodecException, EncodeException{
         System.out.println("Message from " + session.getId() + ": " + message);
         try {
-            session.getBasicRemote().sendObject(FrameToSend().getWidth());
-            session.getBasicRemote().sendObject(FrameToSend().getHeight());
-            session.getBasicRemote().sendObject(FrameToSend().getData().toString());
+            session.getBasicRemote().sendObject(getVideoFrame().getWidth());
+            session.getBasicRemote().sendObject(getVideoFrame().getHeight());
+            session.getBasicRemote().sendObject(getVideoFrame().getData().toString());
            // websocket.sendBinaryData();
         } catch (IOException ex) {
         }
