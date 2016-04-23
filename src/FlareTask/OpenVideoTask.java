@@ -5,12 +5,20 @@
  */
 package FlareTask;
 
+import FlareMessage.FrameMessage;
 import FlareMessage.OpenVideoMessage;
+import Video.Frame;
+import Video.VideoManager;
+import Video.VideoParser;
 import WebSocket.Message.WebSocketBinaryMessage;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import org.jcodec.api.JCodecException;
 
 /**
  *
@@ -54,6 +62,8 @@ public class OpenVideoTask extends FlareTask {
 
             //If exists return meta data and start a video manager
             responseMessage.setVideoAvailability(true);
+            
+            
 
         } else {
 
@@ -71,6 +81,47 @@ public class OpenVideoTask extends FlareTask {
         } catch (IOException ex) {
 
             System.out.println(ex.toString());
+        }
+        
+        
+            /**
+             * TEST CODE ONLY, THIS SHOULD GO IN FLARE CLIENT
+             */
+        if (fileAvailable()) {
+
+            //If exists return meta data and start a video manager
+            
+
+            ArrayList<BufferedImage> frameList = new ArrayList<BufferedImage>();
+            BufferedImage img = null;
+            FrameMessage frameMessage = new FrameMessage();
+            
+            System.out.println(System.getProperty("user.dir"));
+            
+            try {
+                
+                
+                for(int n = 0; n < 152; n++){
+                    
+                    img = ImageIO.read(new File("testVideo/frame" + String.format("%03d", n) +".jpg"));
+                    frameMessage.setFrame(img);
+                    frameMessage.setIndex(n);
+                    flareClient.sendBinaryData(frameMessage.toBinary());
+                    
+                    
+                }
+                
+              
+
+
+                
+            } catch (IOException ex ) {
+                Logger.getLogger(OpenVideoTask.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println(ex.getMessage());
+            } 
+ 
+            
+
         }
         
         

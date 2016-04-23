@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package FlareProtocol;
+package Video;
 
 /**
  *
  * @author mac
  */
-public class FlareOpCode {
+public class TestVideoManager {
     
-    public final static byte OPEN_VIDEO = 0;
-    public final static byte FRAME = 1;
+    public TestVideoManager(String path){
+        
+    }
     
 }

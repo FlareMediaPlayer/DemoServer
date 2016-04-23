@@ -33,7 +33,7 @@ public class VideoManager {
     public void loadVideo(String path) throws IOException{
         
         this.videoFile = new File(path);
-        this.imgBytes = Files.readAllBytes(this.videoFile.toPath());
+        //this.imgBytes = Files.readAllBytes(this.videoFile.toPath());
         
     }
     

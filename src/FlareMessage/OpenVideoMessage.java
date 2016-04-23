@@ -42,10 +42,11 @@ public class OpenVideoMessage extends FlareMessage{
            messageLength =  dataLength + HEADER_LENGTH;
            data = new byte[messageLength];
            
-           
-           data[0] = flareOpCode;
            //Put Message Length
-           FlareMessage.intToData(data, 1, dataLength);
+           FlareMessage.intToData(data, 0, messageLength);
+           data[4] = flareOpCode;
+           
+           
            
            //Followed by (byte) 0
            data[5] = 0;
@@ -60,9 +61,8 @@ public class OpenVideoMessage extends FlareMessage{
            data = new byte[messageLength];
            
            
-           data[0] = flareOpCode;
-           //Put Message Length
-           FlareMessage.intToData(data, 1, dataLength);
+           FlareMessage.intToData(data, 0, messageLength);
+           data[4] = flareOpCode;
            
            //Followed by (byte) 0
            data[5] = 1;

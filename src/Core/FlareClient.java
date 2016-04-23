@@ -101,7 +101,7 @@ public class FlareClient implements Runnable {
     }
 
     public void sendBinaryData(byte[] data) throws IOException{
-        System.out.println("data length is  " +  data.length);
+        //System.out.println("data length is  " +  data.length);
         clientSocket.sendBinaryData(data);
         
     }

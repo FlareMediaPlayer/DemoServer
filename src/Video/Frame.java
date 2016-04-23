@@ -53,6 +53,10 @@ public class Frame {
         this.frame = transform(_framePic);
         this.indexInVideo = _indexInVideo;
     }
+    
+    public int getIndex(){
+        return indexInVideo;
+    }
 
     /**
      *

@@ -40,6 +40,12 @@ public class VideoParser implements Comparator<Frame>{
               
     }
     
+    public int getFrameCount(){
+        
+        return totalFrames;
+        
+    }
+    
 
     /**
      * Retrieve all the frames in the video file.
@@ -83,12 +89,12 @@ public class VideoParser implements Comparator<Frame>{
                         Picture p = FrameGrab.getNativeFrame(videoFile, i);
                         Frame frame = new Frame(p,i);
                         frameList.add(i,frame);
-                        //System.out.println("added: " + i);
+                        System.out.println("added: " + i);
 
                     }
                 
             }
-
+            System.out.println("done");
             return frameList;
     }
     
