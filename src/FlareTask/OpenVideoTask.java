@@ -5,6 +5,7 @@
  */
 package FlareTask;
 
+import FlareMessage.AudioMessage;
 import FlareMessage.FrameMessage;
 import FlareMessage.OpenVideoMessage;
 import Video.Frame;
@@ -100,6 +101,11 @@ public class OpenVideoTask extends FlareTask {
             
             try {
                 
+                //NOW GET AUDIO
+                AudioMessage audioMessage = new AudioMessage();
+                audioMessage.setAudioPath("testVideo/audio.m4a");
+                flareClient.sendBinaryData(audioMessage.toBinary());
+
                 
                 for(int n = 0; n < 152; n++){
                     
@@ -111,8 +117,7 @@ public class OpenVideoTask extends FlareTask {
                     
                 }
                 
-              
-
+                
 
                 
             } catch (IOException ex ) {

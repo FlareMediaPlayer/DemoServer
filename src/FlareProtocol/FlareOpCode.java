@@ -13,5 +13,6 @@ public class FlareOpCode {
     
     public final static byte OPEN_VIDEO = 0;
     public final static byte FRAME = 1;
+    public final static byte AUDIO = 2;
     
 }
