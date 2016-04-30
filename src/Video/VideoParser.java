@@ -27,16 +27,17 @@ public class VideoParser implements Comparator<Frame>{
     private ArrayList<Frame> frameList;
     
     
-    public VideoParser(String file) throws FileNotFoundException, IOException{
+    public VideoParser(String file) throws FileNotFoundException, IOException, JCodecException{
             this(new File(file));
     }
     
-    public VideoParser(File file) throws FileNotFoundException, IOException{
+    public VideoParser(File file) throws FileNotFoundException, IOException, JCodecException{
             videoFile = file;
             
             //need total frames; FrameGrab does not return null if time/index is beyond the video.
             totalFrames = (new MP4Demuxer(NIOUtils.readableFileChannel(videoFile)))
                                     .getVideoTrack().getMeta().getTotalFrames();
+            frameList = getAllFrames();
               
     }
     
@@ -44,6 +45,16 @@ public class VideoParser implements Comparator<Frame>{
         
         return totalFrames;
         
+    }
+    
+    /**
+     * Gets one Frame object
+     * @param indexInVideo 
+     * @return an Frame object representing the actual frame from the file
+     */
+    public Frame getFrame (int indexInVideo)
+    {
+        return frameList.get(indexInVideo);
     }
     
 
@@ -159,5 +170,7 @@ public class VideoParser implements Comparator<Frame>{
             }
             
     }
+    
+    
 
 }
