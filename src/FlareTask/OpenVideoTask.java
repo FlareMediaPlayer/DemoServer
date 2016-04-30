@@ -93,25 +93,32 @@ public class OpenVideoTask extends FlareTask {
             //If exists return meta data and start a video manager
             
 
-            ArrayList<BufferedImage> frameList = new ArrayList<BufferedImage>();
-            BufferedImage img = null;
-            FrameMessage frameMessage = new FrameMessage();
+            // ArrayList<BufferedImage> frameList = new ArrayList<BufferedImage>();
+            
+            //BufferedImage img = null;
+            //
             
             System.out.println(System.getProperty("user.dir"));
             
             try {
-                
+                // initializes video parser with the file to be parsed
+                VideoParser videoParser = new VideoParser(new File(testFile)); 
+                FrameMessage frameMessage = new FrameMessage(); 
+                int totalFrames = videoParser.getFrameCount(); 
+                Frame currentFrame = null;
+                BufferedImage img = null;
                 //NOW GET AUDIO
                 AudioMessage audioMessage = new AudioMessage();
                 audioMessage.setAudioPath("testVideo/audio.m4a");
                 flareClient.sendBinaryData(audioMessage.toBinary());
-
-                
-                for(int n = 0; n < 152; n++){
-                    
-                    img = ImageIO.read(new File("testVideo/frame" + String.format("%03d", n) +".jpg"));
+                // parse one frame at the time, and send its data to the client
+                for(int n = 0; n < totalFrames; n++){
+                    currentFrame = videoParser.getFrame(n); // current frame
+                    img = currentFrame.getBufferedImage(); // current buff image
+                    //img = ImageIO.read(new File("testVideo/frame" + String.format("%03d", n) +".jpg"));
                     frameMessage.setFrame(img);
                     frameMessage.setIndex(n);
+                    // sent data
                     flareClient.sendBinaryData(frameMessage.toBinary());
                     
                     
@@ -123,7 +130,11 @@ public class OpenVideoTask extends FlareTask {
             } catch (IOException ex ) {
                 Logger.getLogger(OpenVideoTask.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println(ex.getMessage());
-            } 
+            } catch (JCodecException jcodecEx)
+            {
+                Logger.getLogger(OpenVideoTask.class.getName()).log(Level.SEVERE, null, jcodecEx);
+                System.out.println(jcodecEx.getMessage());
+            }
  
             
 
