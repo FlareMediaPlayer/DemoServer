@@ -27,16 +27,24 @@ public class FrameMessage  extends FlareMessage{
     private BufferedImage frame;
     protected ByteArrayOutputStream byteStream = new ByteArrayOutputStream(); 
     private int index;
+    private Frame frameObject;
     
     public FrameMessage(){
         flareOpCode = FlareOpCode.FRAME;
         //System.out.println("frame code is " + flareOpCode);
     }
     
+    // sets frame to bufferedImage
     public void setFrame(BufferedImage frame){
         
         this.frame = frame;
         
+    }
+    
+    // sets frame to object Frame
+    public void setFrame (Frame frame)
+    {
+        this.frameObject = frame;
     }
     
     public void setIndex(int index){
