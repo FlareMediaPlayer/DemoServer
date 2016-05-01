@@ -27,7 +27,7 @@ import org.jcodec.api.JCodecException;
  */
 public class OpenVideoTask extends FlareTask {
 
-    String testFile = "file.mp4";
+    String testFile = "sample.mp4";
     String requestPath;
 
     private byte[] data;
@@ -104,7 +104,7 @@ public class OpenVideoTask extends FlareTask {
                 // initializes video parser with the file to be parsed
                 VideoParser videoParser = new VideoParser(new File(testFile)); 
                 FrameMessage frameMessage = new FrameMessage(); 
-                int totalFrames = videoParser.getFrameCount(); 
+                int totalFrames = videoParser.getVideoFramesTotal(); 
                 Frame currentFrame = null;
                 BufferedImage img = null;
                 //NOW GET AUDIO
@@ -113,7 +113,7 @@ public class OpenVideoTask extends FlareTask {
                 flareClient.sendBinaryData(audioMessage.toBinary());
                 // parse one frame at the time, and send its data to the client
                 for(int n = 0; n < totalFrames; n++){
-                    currentFrame = videoParser.getFrame(n); // current frame
+                    currentFrame = videoParser.getNextFrame(n); // current frame
                     img = currentFrame.getBufferedImage(); // current buff image
                     //img = ImageIO.read(new File("testVideo/frame" + String.format("%03d", n) +".jpg"));
                     frameMessage.setFrame(img);

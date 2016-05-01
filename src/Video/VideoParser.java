@@ -4,27 +4,50 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 
 import org.jcodec.api.FrameGrab;
 import org.jcodec.api.JCodecException;
+import org.jcodec.api.UnsupportedFormatException;
+import org.jcodec.api.specific.AVCMP4Adaptor;
+import org.jcodec.api.specific.ContainerAdaptor;
+import org.jcodec.common.JCodecUtil;
+import org.jcodec.common.JCodecUtil.Format;
 import org.jcodec.common.NIOUtils;
 import org.jcodec.common.model.Picture;
+import org.jcodec.containers.mp4.demuxer.AbstractMP4DemuxerTrack;
 import org.jcodec.containers.mp4.demuxer.MP4Demuxer;
 
 /**
- * VideoParser takes in a file and parses the video into Frames.
- * WARNING: EXTREMELY SLOW. If testing then use a 3 second video or less to get
- *          a result in a 'reasonable' time.
+ * Description:     VideoParser takes in a video file and can extract the frames
+ *                  and meta data of the file.
+ * 
+ * Usage  -         Pulling one Frame at a time:
+ * 
+ *                  Call getNextFrame() repeatedly to get each frame one at a
+ *                  time. You may use getVideoFramesTotal() as an upper bound
+ *                  or simply let getNextFrame() return null once it reaches the
+ *                  end of the video.
+ * 
+ *                  Use seekFrameAtSec(int) or seekFrameAtIndex(int) to target 
+ *                  the closest frame of the given time and call getNextFrame() 
+ *                  repeatedly again to start getting frames from that point in 
+ *                  the video. Each frame is given an official index by JCodec.
+ * 
+ * Usage (old) -    call getAllFrames() to get an ArrayList of all Frames. Be wary
+ *                  of OutOfMemory error if you're processing a large file. 
  * 
  * @author Jimmy
  */
-public class VideoParser implements Comparator<Frame>{
-
-    private File videoFile;
-    private int totalFrames;    //0 to totalFrames-1
-    private ArrayList<Frame> frameList;
+public class VideoParser{
+    
+    
+    private ArrayList<Frame> frameList; //used by array list methods only
+    
+    private FrameGrab frameGrab;    //Jcodec api for pulling frames out of video.
+    private MP4Demuxer mp4d;    //the general mp4 parser; Might come in handy later.
+    private AbstractMP4DemuxerTrack videoTrack; //the video in mp4 file
+    private ContainerAdaptor decoder;   //decoder for videoTrack 
+    
     
     
     public VideoParser(String file) throws FileNotFoundException, IOException, JCodecException{
@@ -32,34 +55,173 @@ public class VideoParser implements Comparator<Frame>{
     }
     
     public VideoParser(File file) throws FileNotFoundException, IOException, JCodecException{
-            videoFile = file;
+        
+        //only mp4 supported in jcodec 0.1.9;
+        Format detectFormat = JCodecUtil.detectFormat(file);
+        if(detectFormat == Format.MOV){
+
+            mp4d = new MP4Demuxer(NIOUtils.readableFileChannel(file));
+            videoTrack = mp4d.getVideoTrack();
+            decoder = new AVCMP4Adaptor((AbstractMP4DemuxerTrack) videoTrack);
+            frameGrab = new FrameGrab(videoTrack, decoder);
+
+        }else{
             
-            //need total frames; FrameGrab does not return null if time/index is beyond the video.
-            totalFrames = (new MP4Demuxer(NIOUtils.readableFileChannel(videoFile)))
-                                    .getVideoTrack().getMeta().getTotalFrames();
-            frameList = getAllFrames();
-              
+            throw new UnsupportedFormatException("Only MP4 supported at this time");
+            
+        }
+            
     }
     
-    public int getFrameCount(){
-        
-        return totalFrames;
-        
+    
+    
+    //----------getters for metadata------------
+    
+    /**
+     * Get total frames in this video. The desired frames are from 0 to total-1.
+     * @return int - total frames in this video.
+     */
+    public int getVideoFramesTotal(){
+        return videoTrack.getMeta().getTotalFrames();
+    }
+    
+    
+    /**
+     * Get the video frames per second. This will return 0 if the duration is
+     * less than or equal to zero.
+     * 
+     * @return double - frames per second of video.
+     */
+    public double getVideoFPS(){
+        if(getVideoDuration() <= 0.0) return 0.0;
+        return getVideoFramesTotal()/getVideoDuration();
+    }
+    
+    
+    public int getVideoHeight(){
+        return decoder.getMediaInfo().getDim().getHeight();
+    }
+    
+    
+    public int getVideoWidth(){
+        return decoder.getMediaInfo().getDim().getWidth();
     }
     
     /**
-     * Gets one Frame object
-     * @param indexInVideo 
-     * @return an Frame object representing the actual frame from the file
+     * Get the duration of the entire video.
+     * @return double - duration of the video.
      */
-    public Frame getFrame (int indexInVideo)
-    {
-        return frameList.get(indexInVideo);
+    public double getVideoDuration(){
+        return videoTrack.getMeta().getTotalDuration();
     }
     
 
+    
+    /**
+     * Get the index that will be given to getNextFrame()'s returning Frame.
+     * 
+     * @see getNextFrame()
+     * @return int - index of current frame waiting to be called by getNextFrame()
+     */
+    public int getNextFrameIndex(){
+        return (int) videoTrack.getCurFrame();
+    }
+    
+    
+    /**
+     * Set the frame seeking pointer to a video frame at the given time. Call
+     * getNextFrame() to retrieve the frame. But do not call this method
+     * repeatedly to get the next frame in order, just call getNextFrame() as it
+     * will increment on its own.
+     * 
+     * Throws exception if given time is beyond the video duration.
+     * 
+     * @see getNextFrame()
+     * @param time : int -  seconds
+     * @return int - Frame index; 
+     * @throws IOException
+     * @throws JCodecException 
+     */
+    public int seekFrameAtSec(int time) throws IOException, JCodecException{
+        
+        if(time < 0 || time > getVideoDuration())
+            throw new IllegalArgumentException("VideoParser.seekFrameAtSec given time is invalid " + time);
+
+        frameGrab.seekToSecondPrecise((double)time);
+        return (int) videoTrack.getCurFrame();
+        
+    }
+    
+    
+    /**
+     * Set the frame seeking pointer to the given video frame at the given index.
+     * Call getNextFrame() to retrieve the frame. But do not call this method
+     * repeatedly to get the next frame in order, just call getNextFrame() as it
+     * will increment on its own.
+     * 
+     * Throws exception if given index is beyond the video frame count.
+     * 
+     * @throws java.io.IOException
+     * @throws org.jcodec.api.JCodecException
+     * @see getNextFrame()
+     * @param index : int - the frame index with respect to total set of frames in the video.
+     */
+    public void seekFrameAtIndex(int index) throws IOException, JCodecException{
+        
+        if(index < 0 || index >= getVideoFramesTotal())
+            throw new IllegalArgumentException("VideoParser.seekFrameAtIndex given index is invalid " + index);
+
+        frameGrab.seekToFramePrecise(index);
+        
+    }
+    
+    
+    /**
+     * Gets this current frame and increments to the next frame. Call this method
+     * repeatedly to get each subsequent frame one at a time. Use seekFrameAtIndex()
+     * or seekFrameAtSec() to change the starting frame reading point.
+     * 
+     * @throws java.io.IOException
+     * @see seekFrameAtIndex(int)
+     * @see seekFrameAtSec(int)
+     * @return a Frame or null if end of video
+     */
+    public Frame getNextFrame() throws IOException{
+        
+        int index = (int) videoTrack.getCurFrame();
+        Picture p = frameGrab.getNativeFrame();
+        return new Frame(p, index);
+        
+    }
+    
+    /**
+     * Gets frame at specified index and increments to next frame. This method
+     * is a nested call of seekFrameAtIndex(index) and getNextFrame(), but if
+     * the given index is the next expected index, then it forward the call to
+     * getNextFrame().
+     * @param index - The targeted Frame index
+     * @return Frame or null
+     */
+    public Frame getNextFrame(int index) throws IOException, JCodecException{
+        
+        if(index == videoTrack.getCurFrame()) return getNextFrame();
+        seekFrameAtIndex(index);
+        return getNextFrame();
+        
+    }
+    
+    
+    
+    //\/\/\/\\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    //--------------------------------------------------------------------------------------\\
+    //  OLD ARRAYLIST METHODS : BE WARY OF OUTOFMEMORY ERROR WHEN PROCESSING A LARGE FILE   \\
+    //---------------(Recommend you use the methods above instead)--------------------------\\
+    //\/\/\/\\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    
+    
     /**
      * Retrieve all the frames in the video file.
+     * <p><strong>Beware of OutOfMemory error if processing a large file. </strong></p>
      * 
      * @throws IOException
      * @throws org.jcodec.api.JCodecException
@@ -67,110 +229,45 @@ public class VideoParser implements Comparator<Frame>{
      * @return an ArrayList of Frames
      */
     public ArrayList<Frame> getAllFrames() throws IOException, JCodecException{
-            return getListOfFrames();
-    }
-    
-    /**
-     * Retrieve all the frames in the video file from given time to end of video.
-     * 
-     * @throws Exception
-     * @see getListOfFrames(double)
-     * @param sec long : the time.
-     * @return an ArrayList of Frames
-     */
-    public ArrayList<Frame> getAllFramesFromTime(int sec) throws Exception {
-            return getListOfFrames((double)sec); 
-    }
-    
-    public ArrayList<Frame> getAllFramesFromTime(double sec) throws Exception{
-            return getListOfFrames(sec);
-    }
-    
-
-    
-    //private helper methods
-    private ArrayList<Frame> getListOfFrames() throws IOException, JCodecException{
-            
-            if(frameList == null){
-                
-                    frameList = new ArrayList<Frame>();
-
-                    for(int i = 0; i < totalFrames; i++){
-                        
-                        Picture p = FrameGrab.getNativeFrame(videoFile, i);
-                        Frame frame = new Frame(p,i);
-                        frameList.add(i,frame);
-                        System.out.println("added: " + i);
-
-                    }
-                
-            }
-            System.out.println("done");
-            return frameList;
-    }
-    
-    /**
-     * Retrieves list of frames starting with the frame at the specified time,
-     * but only if the frame is valid. The specified frame is only valid if its
-     * data matches another frame that from a list of known real frames.
-     * 
-     * @throws Exception 
-     * @param time double
-     * @return ArrayList of Frames or null
-     */
-    private ArrayList<Frame> getListOfFrames(double time) throws Exception{
         
-            ArrayList<Frame> realFrameList = getListOfFrames();
-            ArrayList<Frame> returningList = null;
+        if(frameList == null){
 
-            Picture p = FrameGrab.getNativeFrame(videoFile, time);
-            Frame verifyMe = new Frame(p,-1);
-            
-            //find out which real index this should the frame 'verifyMe' be given
-            for(int i = 0; i < realFrameList.size(); i++){
+            frameList = new ArrayList<Frame>();
+            frameGrab.seekToFrameSloppy(0);
+
+            for(int i = 0; i < getVideoFramesTotal(); i++){
                 
-                if( compare(realFrameList.get(i),verifyMe) == 1 ){
-                    
-                    returningList = new ArrayList<Frame>();
-                    verifyMe = new Frame(p,i);
-                    
-                    returningList.add(verifyMe);
-                    returningList.addAll(realFrameList.subList(i+1, realFrameList.size()));
-                    
-                    break;
-                    
-                }
-                
+                frameList.add(getNextFrame());
+                //System.out.println("added Frame: " + i);
+
             }
-            
-            //if returningList is null then the given time produced an invalid frame.
-            if(returningList == null)
-                    throw new Exception("Invalid time/ Invalid Frame");
-                            
-            return returningList;
+
+        }
+
+        return frameList;
     }
     
     
     /**
-     * Compare two Frames for equivalence by checking their image content.
+     * Retrieve all frames starting at the specified time to the end of the video.
+     * <p><strong>Beware of OutOfMemory error if processing a large file. </strong></p>
      * 
-     * @param f1 : Frame
-     * @param f2 : Frame
-     * @return int 1 for true, 0 for false
+     * @throws java.io.IOException
+     * @throws org.jcodec.api.JCodecException
+     * @param sec - time in video duration to begin getting all the frames.
+     * @return ArrayList of Frames starting at the given second.
      */
-    @Override
-    public int compare(Frame f1, Frame f2) {
+    public ArrayList<Frame> getAllFramesFromTime(int sec) throws IOException, JCodecException{
         
-            boolean dataEquals = Arrays.equals(f1.getData(), f2.getData());
+        ArrayList<Frame> realFrameList = getAllFrames();
+        ArrayList<Frame> returningList = new ArrayList<Frame>();
 
-            if(dataEquals){
-                return 1;
-            }else{
-                return 0;
-            }
+        int i  = seekFrameAtSec(sec);
+
+        returningList.addAll(realFrameList.subList(i+1, realFrameList.size()));
+
+        return returningList;
             
     }
     
-    
-
 }
