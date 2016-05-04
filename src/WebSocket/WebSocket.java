@@ -200,7 +200,6 @@ public class WebSocket extends Socket {
             String line = in.readLine();
 
             while (line != null && line.trim().length() > 0) {
-
                 StringTokenizer st = new StringTokenizer(line);
                 String args = st.nextToken();
 
