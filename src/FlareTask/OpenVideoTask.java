@@ -8,9 +8,6 @@ package FlareTask;
 import FlareMessage.AudioMessage;
 import FlareMessage.FrameMessage;
 import FlareMessage.OpenVideoMessage;
-import Video.Frame;
-import Video.VideoManager;
-import Video.VideoParser;
 import WebSocket.Message.WebSocketBinaryMessage;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -23,7 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.jcodec.api.JCodecException;
+
 
 /**
  *

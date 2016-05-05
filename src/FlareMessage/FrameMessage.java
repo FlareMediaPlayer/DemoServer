@@ -7,7 +7,6 @@ package FlareMessage;
 
 import FlareProtocol.FlareOpCode;
 import Utility.ByteUtils;
-import Video.Frame;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -27,7 +26,7 @@ public class FrameMessage  extends FlareMessage{
     private BufferedImage frame;
     protected ByteArrayOutputStream byteStream = new ByteArrayOutputStream(); 
     private int index;
-    private Frame frameObject;
+
     
     public FrameMessage(){
         flareOpCode = FlareOpCode.FRAME;
@@ -41,11 +40,7 @@ public class FrameMessage  extends FlareMessage{
         
     }
     
-    // sets frame to object Frame
-    public void setFrame (Frame frame)
-    {
-        this.frameObject = frame;
-    }
+
     
     public void setIndex(int index){
         this.index = index;

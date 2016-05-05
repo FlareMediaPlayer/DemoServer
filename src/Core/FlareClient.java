@@ -8,7 +8,6 @@ package Core;
 import FlareProtocol.FlareOpCode;
 import FlareTask.FlareTask;
 import FlareProtocol.TaskTable;
-import Video.VideoManager;
 import WebSocket.Message.WebSocketBinaryMessage;
 import WebSocket.WebSocket;
 import WebSocket.Message.WebSocketMessage;
@@ -52,9 +51,7 @@ public class FlareClient implements Runnable {
     BufferedReader in;
     private Queue<FlareTask> taskeQueue;
     
-    //Keep a map of active video managers for each client (each client can have more than one video per page)
-    private Map<Integer, VideoManager> videoManagers;
-    
+ 
     
     //This is our table to look up handlers for each WebSocketMessage
     private static final Map<Byte, Class> messageTable = initializeTable();
@@ -139,13 +136,7 @@ public class FlareClient implements Runnable {
         }
     }
     
-    private void addVideoManager(){
-        
-        int videoManagerId = 0;//videoManagers.size();
-            
-        videoManagers.put(videoManagerId, new VideoManager(this));
 
-    }
     
     
     
