@@ -75,6 +75,7 @@ public class FlareMediaPlayerServer {
         //Load configuration stuff here
     }
     
+    //hashmap each client with an ID when the client is active
     public void addToActiveThreads(FlareClient client) {
         
         clientThreads.put(client.getId(), client);
