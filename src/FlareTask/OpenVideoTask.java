@@ -124,7 +124,7 @@ public class OpenVideoTask extends FlareTask {
             //
             
           
-            /*
+            
             try {
                 // initializes video parser with the file to be parsed
    
@@ -133,7 +133,7 @@ public class OpenVideoTask extends FlareTask {
    
                 
                 
-                Frame currentFrame = null;
+                //Frame currentFrame = null;
                 BufferedImage img = null;
                 //NOW GET AUDIO
                 AudioMessage audioMessage = new AudioMessage();
@@ -161,7 +161,7 @@ public class OpenVideoTask extends FlareTask {
                 System.out.println(ex.getMessage());
             }
  
-            */
+            
 
         }
         
