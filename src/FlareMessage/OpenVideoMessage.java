@@ -14,6 +14,10 @@ import FlareProtocol.FlareOpCode;
 public class OpenVideoMessage extends FlareMessage{
     
     boolean videoIsAvailable;
+    int height;
+    int width;
+    double fps;
+    double duration;
 
     
     public OpenVideoMessage() {
@@ -27,6 +31,22 @@ public class OpenVideoMessage extends FlareMessage{
         
         videoIsAvailable = available;
         
+    }
+    
+    public void setHeight(int height){
+        this.height = height;
+    }
+    
+    public void setWidth(int width){
+        this.width = width;
+    }
+    
+    public void setFps(double fps){
+        this.fps = fps;
+    }
+    
+    public void setDuration(double duration){
+        this.duration = duration;
     }
 
     @Override
@@ -48,6 +68,7 @@ public class OpenVideoMessage extends FlareMessage{
            
            
            
+           
            //Followed by (byte) 0
            data[5] = 0;
            //System.out.println(data[5]);
@@ -56,7 +77,7 @@ public class OpenVideoMessage extends FlareMessage{
            
        }else{
            
-           dataLength = 1;
+           dataLength = 25;
            messageLength =  dataLength + HEADER_LENGTH;
            data = new byte[messageLength];
            
@@ -66,6 +87,18 @@ public class OpenVideoMessage extends FlareMessage{
            
            //Followed by (byte) 0
            data[5] = 1;
+           
+           //width
+           FlareMessage.intToData(data, 6, width);
+           
+           //height
+           FlareMessage.intToData(data, 10, height);
+           
+           //fps
+           FlareMessage.doubleToData(data, 14, fps);
+           
+           //duration
+           FlareMessage.doubleToData(data, 22, duration);
            
        }
        

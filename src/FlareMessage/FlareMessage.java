@@ -5,6 +5,8 @@
  */
 package FlareMessage;
 
+import java.nio.ByteBuffer;
+
 /**
  *
  * @author mac
@@ -34,6 +36,15 @@ public abstract class FlareMessage {
         data[offset + 1] = (byte) (input >> 16);
         data[offset + 2] = (byte) (input >> 8);
         data[offset + 3] = (byte) input;
+    }
+    
+        public static void doubleToData(byte[] data, int offset, double input){
+            byte[] bytes = new byte[8];
+            ByteBuffer.wrap(bytes).putDouble(input);
+    
+            for(int n = 0; n < 8 ; n++){
+                data[offset + n] = bytes[n];
+            }
     }
     
 }

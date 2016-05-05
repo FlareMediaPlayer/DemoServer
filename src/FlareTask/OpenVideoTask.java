@@ -15,7 +15,11 @@ import WebSocket.Message.WebSocketBinaryMessage;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -28,7 +32,9 @@ import org.jcodec.api.JCodecException;
 public class OpenVideoTask extends FlareTask {
 
     String testFile = "sample.mp4";
-    String requestPath;
+    String requestID;
+    List<String> metaData;
+    int totalFrames;
 
     private byte[] data;
 
@@ -45,24 +51,45 @@ public class OpenVideoTask extends FlareTask {
         dataLength = dataLength | data[1] << 32;
         System.out.println("datalength is + " + dataLength);
 
-        byte requestPathLength = data[5];
-        System.out.println("request path length is " + requestPathLength);
+        byte requestIDLength = data[5];
+        System.out.println("request ID length is " + requestIDLength);
 
         //Now Read the path
-        StringBuilder pathStringBuilder = new StringBuilder(requestPathLength);
-        for (int c = 0; c < requestPathLength; c++) {
+        StringBuilder pathStringBuilder = new StringBuilder(requestIDLength);
+        for (int c = 0; c < requestIDLength; c++) {
             pathStringBuilder.append(Character.toChars(data[c + 6]));
 
         }
 
-        requestPath = new String(pathStringBuilder);
-        System.out.println(requestPath);
+        requestID = new String(pathStringBuilder);
+        System.out.println(requestID);
 
         //Check if file exists
-        if (fileAvailable()) {
+        if (videoAvailable()) {
+
+            
+            try {
+                metaData = Files.readAllLines(Paths.get(requestID + "/meta.txt"), Charset.forName("UTF-8"));
+            } catch (IOException ex) {
+                Logger.getLogger(OpenVideoTask.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            totalFrames = Integer.parseInt(metaData.get(0));
+            int width = Integer.parseInt(metaData.get(1));
+            int height = Integer.parseInt(metaData.get(2));
+            double fps = Double.parseDouble(metaData.get(3));
+            double duration = Double.parseDouble(metaData.get(4));
+            System.out.println(duration);
+        
+                
 
             //If exists return meta data and start a video manager
             responseMessage.setVideoAvailability(true);
+            responseMessage.setWidth(width);
+            responseMessage.setHeight(height);
+            responseMessage.setFps(fps);
+            responseMessage.setDuration(duration);
+            
             
             
 
@@ -78,7 +105,8 @@ public class OpenVideoTask extends FlareTask {
         try {
 
             flareClient.sendBinaryData(responseMessage.toBinary());
-
+            System.out.println("So far");
+            
         } catch (IOException ex) {
 
             System.out.println(ex.toString());
@@ -88,7 +116,7 @@ public class OpenVideoTask extends FlareTask {
             /**
              * TEST CODE ONLY, THIS SHOULD GO IN FLARE CLIENT
              */
-        if (fileAvailable()) {
+        if (videoAvailable()) {
 
             //If exists return meta data and start a video manager
             
@@ -98,24 +126,28 @@ public class OpenVideoTask extends FlareTask {
             //BufferedImage img = null;
             //
             
-            System.out.println(System.getProperty("user.dir"));
-            
+          
+            /*
             try {
                 // initializes video parser with the file to be parsed
-                VideoParser videoParser = new VideoParser(new File(testFile)); 
+   
+
                 FrameMessage frameMessage = new FrameMessage(); 
-                int totalFrames = videoParser.getVideoFramesTotal(); 
+   
+                
+                
                 Frame currentFrame = null;
                 BufferedImage img = null;
                 //NOW GET AUDIO
                 AudioMessage audioMessage = new AudioMessage();
-                audioMessage.setAudioPath("testVideo/audio.m4a");
+                audioMessage.setAudioPath(requestID +"/audio.m4a");
                 flareClient.sendBinaryData(audioMessage.toBinary());
+                
                 // parse one frame at the time, and send its data to the client
                 for(int n = 0; n < totalFrames; n++){
-                    currentFrame = videoParser.getNextFrame(n); // current frame
-                    img = currentFrame.getBufferedImage(); // current buff image
-                    //img = ImageIO.read(new File("testVideo/frame" + String.format("%03d", n) +".jpg"));
+                    //currentFrame = videoParser.getNextFrame(n); // current frame
+                    //img = currentFrame.getBufferedImage(); // current buff image
+                    img = ImageIO.read(new File(requestID + "/frame" + n + ".jpg"));
                     frameMessage.setFrame(img);
                     frameMessage.setIndex(n);
                     // sent data
@@ -130,13 +162,9 @@ public class OpenVideoTask extends FlareTask {
             } catch (IOException ex ) {
                 Logger.getLogger(OpenVideoTask.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println(ex.getMessage());
-            } catch (JCodecException jcodecEx)
-            {
-                Logger.getLogger(OpenVideoTask.class.getName()).log(Level.SEVERE, null, jcodecEx);
-                System.out.println(jcodecEx.getMessage());
             }
  
-            
+            */
 
         }
         
@@ -144,11 +172,11 @@ public class OpenVideoTask extends FlareTask {
 
     }
 
-    private boolean fileAvailable() {
+    private boolean videoAvailable() {
 
-        File fileToOpen = new File(requestPath);
+        File fileToOpen = new File(requestID);
 
-        return fileToOpen.isFile();
+        return fileToOpen.isDirectory();
 
     }
 
