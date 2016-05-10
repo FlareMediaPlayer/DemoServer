@@ -26,7 +26,7 @@ public class FlareMediaPlayerServer {
 
 
     // Singleton Instance
-    private FlareMediaPlayerServer mediaServer;
+    private static FlareMediaPlayerServer mediaServer;
     //BufferedImage
     /**
      * For now
@@ -153,6 +153,19 @@ public class FlareMediaPlayerServer {
         }
     }
     
+    
+    public static void main(String[] args) {
+
+        try {
+            System.out.println("Initializing Server");
+
+            mediaServer = new FlareMediaPlayerServer();
+            mediaServer.run();
+
+        } catch (Exception ex) {
+
+        }
+    }
    
 
 }

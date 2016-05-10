@@ -31,7 +31,7 @@ public class OpenVideoTask extends FlareTask {
     String testFile = "sample.mp4";
     String requestID;
     List<String> metaData;
-    int totalFrames;
+    int frameCount;
 
     private byte[] data;
 
@@ -71,7 +71,7 @@ public class OpenVideoTask extends FlareTask {
                 Logger.getLogger(OpenVideoTask.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            totalFrames = Integer.parseInt(metaData.get(0));
+            frameCount = Integer.parseInt(metaData.get(0));
             int width = Integer.parseInt(metaData.get(1));
             int height = Integer.parseInt(metaData.get(2));
             double fps = Double.parseDouble(metaData.get(3));
@@ -86,6 +86,7 @@ public class OpenVideoTask extends FlareTask {
             responseMessage.setHeight(height);
             responseMessage.setFps(fps);
             responseMessage.setDuration(duration);
+            responseMessage.setFrameCount(frameCount);
             
             
             
@@ -141,7 +142,7 @@ public class OpenVideoTask extends FlareTask {
                 flareClient.sendBinaryData(audioMessage.toBinary());
                 
                 // parse one frame at the time, and send its data to the client
-                for(int n = 0; n < totalFrames; n++){
+                for(int n = 0; n < frameCount; n++){
                     //currentFrame = videoParser.getNextFrame(n); // current frame
                     //img = currentFrame.getBufferedImage(); // current buff image
                     img = ImageIO.read(new File(requestID + "/frame" + n + ".jpg"));

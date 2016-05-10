@@ -18,6 +18,7 @@ public class OpenVideoMessage extends FlareMessage{
     int width;
     double fps;
     double duration;
+    int frameCount;
 
     
     public OpenVideoMessage() {
@@ -48,6 +49,10 @@ public class OpenVideoMessage extends FlareMessage{
     public void setDuration(double duration){
         this.duration = duration;
     }
+    
+    public void setFrameCount(int frameCount){
+        this.frameCount = frameCount;
+    }
 
     @Override
     public byte[] toBinary() {
@@ -77,7 +82,7 @@ public class OpenVideoMessage extends FlareMessage{
            
        }else{
            
-           dataLength = 25;
+           dataLength = 29;
            messageLength =  dataLength + HEADER_LENGTH;
            data = new byte[messageLength];
            
@@ -99,6 +104,9 @@ public class OpenVideoMessage extends FlareMessage{
            
            //duration
            FlareMessage.doubleToData(data, 22, duration);
+           
+           
+           FlareMessage.intToData(data, 30, frameCount);
            
        }
        
