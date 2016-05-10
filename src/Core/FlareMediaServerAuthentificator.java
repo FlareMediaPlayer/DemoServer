@@ -11,8 +11,8 @@ package Core;
  */
 public class FlareMediaServerAuthentificator 
 {
-    static final String ADMIN = "FlareMediaPlayerServerAdmin";
-    static final String PASSWORD = "FlareMediaPlayerServerAdminPassword";
+    static final String ADMIN = "admin";
+    static final String PASSWORD = "flarePassword";
     
     
     public static boolean serverAuthentification (String admin, String password)
