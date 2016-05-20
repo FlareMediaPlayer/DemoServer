@@ -1,20 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author: Jose Ortiz Costa
+ * date:    05/16/2016
+ * This class provides check credentials for accessing to 
+ * the server interface
  */
 package Core;
 
-/**
- *
- * @author josesfval
- */
 public class FlareMediaServerAuthentificator 
 {
-    static final String ADMIN = "FlareMediaPlayerServerAdmin";
-    static final String PASSWORD = "FlareMediaPlayerServerAdminPassword";
+    // Default credentials
+    public static final String ADMIN = "admin";
+    public static final String PASSWORD = "flarePassword";
     
-    
+    /**
+     * Static method that check for server admin authentification
+     * @param admin
+     * @param password
+     * @return true if the credentials checked were correct. 
+     *         Otherwise returns false.
+     */
     public static boolean serverAuthentification (String admin, String password)
     {
         if (ADMIN.equals(admin) && PASSWORD.equals(password))
