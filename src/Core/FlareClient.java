@@ -35,10 +35,15 @@ import javax.imageio.ImageIO;
 
 
 
-/**
- *
- * @author josesfval
- */
+
+/*
+* @author: Tai Nguyen
+* date:    05/16/2016
+*          Upon the connection, this class handles the information sent from client side.
+*          It manipulates and initialize necessary data in order to keep up with all updates/actions from client.
+*          Then such actions will interpreted as request message and 
+*          server will respond to it through the websocket mechanism.
+*/
 public class FlareClient implements Runnable {
 
     // Client Variables
@@ -77,7 +82,15 @@ public class FlareClient implements Runnable {
         return Collections.unmodifiableMap(table);
 
     }
-
+    /**
+    * Initialize connection for each client
+    * @param sessionId
+    * @param clientSocket
+    * @param inputStream
+    * @param outputStream
+    * @param dataInputStream
+    * @param in
+    */
     public FlareClient(String sessionId, WebSocket clientSocket) throws IOException {
         this.sessionId = sessionId;
         this.clientSocket = clientSocket;
@@ -86,11 +99,6 @@ public class FlareClient implements Runnable {
         outputStream = clientSocket.getOutputStream();
         dataInputStream = new DataInputStream(inputStream);
         in = new BufferedReader(new InputStreamReader(inputStream));
-        
-        /**
-         * Make an array of images
-         */
-
     }
 
     public String getId() {
@@ -124,23 +132,13 @@ public class FlareClient implements Runnable {
                     Logger.getLogger(WebSocket.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                
-                
-               
-                
-
             } catch (IOException e) {
 
             }
 
         }
     }
-    
 
-    
-    
-    
-    
     public abstract class WebSocketMessageHandler {
         protected WebSocketMessage message;
         
