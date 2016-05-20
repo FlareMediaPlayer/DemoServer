@@ -138,7 +138,11 @@ public class FlareClient implements Runnable {
 
         }
     }
-
+    /**
+    *  An abstract object to interpret message from client
+    *  The implementation for the abstract method is required 
+    *  for each task. (Ex: BinaryMessageHandler is a task of sending a video)
+    */
     public abstract class WebSocketMessageHandler {
         protected WebSocketMessage message;
         
@@ -161,20 +165,17 @@ public class FlareClient implements Runnable {
         //END TESTING
     }
     
+    /**
+    * Getting the request from client to open video  and do the open video task
+    */
     public class BinaryMessageHandler extends WebSocketMessageHandler {
 
         //Put all logic for handling a binary message here
-        public void process() {
-            
-            //System.out.println();
+        public void process() {       
             byte flareOpCode = ((WebSocketBinaryMessage)message).getData()[0];
             System.out.println("flare op code is + " + flareOpCode);
-            
-            
-            
 
             try {
-
                 FlareTask task = (FlareTask) TaskTable.taskTable.get(flareOpCode).newInstance();
                 task.setMessage(message);
                 task.setFlareClient(FlareClient.this);
