@@ -28,7 +28,7 @@ public abstract class FlareMessage {
     /**
      * Adds an int to a data array without copying 
      * @param data data array to add int to
-     * @param position position in array to add
+     * @param offset position in array to add
      * @param input input integer
      */
     public static void intToData(byte[] data, int offset, int input){

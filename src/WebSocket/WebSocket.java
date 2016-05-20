@@ -51,7 +51,7 @@ public class WebSocket extends Socket {
     /**
      * Static Constructor
      * @return new WebSocket
-     * @throws IOException 
+     * @throws IOException if cannot establish connection
      */
     public static WebSocket create() throws IOException {
 
@@ -66,7 +66,7 @@ public class WebSocket extends Socket {
 
     /**
      * Default Constructor
-     * @throws IOException 
+     * @throws IOException if cannot establish connection
      */
     protected WebSocket() throws IOException {
 
@@ -76,7 +76,7 @@ public class WebSocket extends Socket {
 
     /**
      * Sets up the pointers for the input streams for reading
-     * @throws IOException 
+     * @throws IOException if cannot io streams
      */
     public void initialize() throws IOException {
 
@@ -90,7 +90,7 @@ public class WebSocket extends Socket {
     /**
      * Sends text data
      * @param text data to send
-     * @throws IOException 
+     * @throws IOException if cant write data
      */
     public void sendTextData(String text) throws IOException {
         
@@ -135,7 +135,7 @@ public class WebSocket extends Socket {
     /**
      * Sends binary data
      * @param data to send
-     * @throws IOException 
+     * @throws IOException if can't write data
      */
     public void sendBinaryData(byte[] data) throws IOException {
        
@@ -181,7 +181,7 @@ public class WebSocket extends Socket {
     /**
      * Returns the WebSocket message
      * @return
-     * @throws IOException 
+     * @throws IOException if cant read data
      */
     public WebSocketMessage getMessage() throws IOException{
         
@@ -214,7 +214,7 @@ public class WebSocket extends Socket {
 
     /**
      * Performs the WebSocket authentication handshake
-     * @throws IOException 
+     * @throws IOException if cant read/write data
      */
     public void handshake() throws IOException {
 
@@ -334,7 +334,7 @@ public class WebSocket extends Socket {
          * Initialization for the frame handler. Sets up i/o streams
          * @param _webSocket reference to current websocket
          * @param _initializerByte byte with the op code
-         * @throws IOException 
+         * @throws IOException if cannot get io streams
          */
         public void initialize(WebSocket _webSocket, byte _initializerByte) throws IOException {
             
@@ -352,7 +352,7 @@ public class WebSocket extends Socket {
         /**
          * Abstract method. Needed to call data processing
          * @return WebSocketMessage that contians processed data
-         * @throws IOException 
+         * @throws IOException if cannot read
          */
         public abstract WebSocketMessage process() throws IOException;
 
@@ -390,7 +390,7 @@ public class WebSocket extends Socket {
         /**
          * Processes the data
          * @return processed websocket message
-         * @throws IOException 
+         * @throws IOException if cannot read
          */
         public WebSocketMessage process() throws IOException {
             
@@ -436,7 +436,7 @@ public class WebSocket extends Socket {
         /**
          * processes the binary frame
          * @return websocket message
-         * @throws IOException 
+         * @throws IOException if cannot read
          */
         public WebSocketMessage process() throws IOException {
             
@@ -482,7 +482,7 @@ public class WebSocket extends Socket {
 
         /**
          * Processes the close request
-         * @return 
+         * @return new websocket text message with stats
          */
         public WebSocketMessage process() {
 

@@ -14,7 +14,7 @@ public class WebSocketServer extends ServerSocket {
     /**
      * Constructor, just needs port number
      * @param port active port number
-     * @throws IOException 
+     * @throws IOException if cannot connect
      */
     public WebSocketServer(int port) throws IOException {
         super(port);
@@ -24,7 +24,7 @@ public class WebSocketServer extends ServerSocket {
      * the accept method is required to complete the websocket handshake.
      * the handshake authentication.
      * @return the new websocket connection after authenticating
-     * @throws IOException 
+     * @throws IOException exception if cant setup io streams
      */
     public WebSocket accept() throws IOException {
         
