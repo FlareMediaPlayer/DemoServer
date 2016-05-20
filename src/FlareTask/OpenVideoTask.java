@@ -17,10 +17,14 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 
-/**
- *  This class handles an opening video request. Currently it will also start the streaming process
- * @author Brian Parra and Jose Ortiz
- */
+/*
+* @author: Tai Nguyen
+* date:    05/16/2016
+*          The class opens the video on server upon its availability status:
+*          The data length on websocket will be decoded into a path to the video,
+*          If the video is available and ready, its metadata inlcuding the frames would be wrapped up 
+*          and send to client 
+*/
 public class OpenVideoTask extends FlareTask {
 
     String testFile = "sample.mp4";

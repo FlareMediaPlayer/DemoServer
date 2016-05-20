@@ -13,7 +13,7 @@ public class FlareMediaServerAuthentificator {
     public static final String PASSWORD = "flarePassword";
 
     /**
-     * Static method that check for server admin authentification
+     * Static method that check for server administrator authentication
      *
      * @param admin user name
      * @param password password

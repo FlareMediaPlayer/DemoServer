@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Core;
 
 import FlareProtocol.FlareOpCode;
@@ -33,11 +28,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
-/**
- * Class for each thread to service a client
- *
- * @author Jose Ortiz and Brian Parra
- */
+
+
+
+
+/*
+* @author: Jose Ortiz and Brian Parra andTai Nguyen
+* date:    05/16/2016
+*          Upon the connection, this class handles the information sent from client side.
+*          It manipulates and initialize necessary data in order to keep up with all updates/actions from client.
+*          Then such actions will interpreted as request message and 
+*          server will respond to it through the websocket mechanism.
+*/
+
 public class FlareClient implements Runnable {
 
     // Client Variables
@@ -80,6 +83,7 @@ public class FlareClient implements Runnable {
 
     }
 
+
     /**
      * Constructor
      *
@@ -87,6 +91,7 @@ public class FlareClient implements Runnable {
      * @param clientSocket socket being used
      * @throws IOException if io cannot be established
      */
+
     public FlareClient(String sessionId, WebSocket clientSocket) throws IOException {
         this.sessionId = sessionId;
         this.clientSocket = clientSocket;
@@ -96,9 +101,6 @@ public class FlareClient implements Runnable {
         dataInputStream = new DataInputStream(inputStream);
         in = new BufferedReader(new InputStreamReader(inputStream));
 
-        /**
-         * Make an array of images
-         */
     }
 
     /**
@@ -154,8 +156,11 @@ public class FlareClient implements Runnable {
     }
 
     /**
-     * Abstract class for handling incoming websocket messages
-     */
+    *  An abstract object to interpret message from client
+    *  The implementation for the abstract method is required 
+    *  for each task. (Ex: BinaryMessageHandler is a task of sending a video)
+    */
+
     public abstract class WebSocketMessageHandler {
 
         protected WebSocketMessage message;
@@ -190,9 +195,11 @@ public class FlareClient implements Runnable {
         //END TESTING
     }
 
+
     /**
      * Handles binary incoming messages
      */
+
     public class BinaryMessageHandler extends WebSocketMessageHandler {
 
         /**
@@ -202,10 +209,10 @@ public class FlareClient implements Runnable {
 
             //System.out.println();
             byte flareOpCode = ((WebSocketBinaryMessage) message).getData()[0];
+
             System.out.println("flare op code is + " + flareOpCode);
 
             try {
-
                 FlareTask task = (FlareTask) TaskTable.taskTable.get(flareOpCode).newInstance();
                 task.setMessage(message);
                 task.setFlareClient(FlareClient.this);

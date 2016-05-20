@@ -12,8 +12,26 @@ import java.util.logging.Logger;
 
 /**
  * Main Server initialization Team #2 Starting point to run the server.
+ * @author      Jimmy He
+ * Date         04/20/2016
+ * Modified     05/12/2016
+ * Package      Core
+ * File         FlareMediaPlayerServer.java
+ * Description  The FlareMediaPlayerServer is the listener for client
+ *              connections. Upon receiving successful connections, a
+ *              new WebSocket and session ID will be made and given to a
+ *              new instance of FlareClient. This FlareClient will then 
+ *              handle any further communication of the connected client.
+ *              The FlareMediaPlayerServer will add the FlareClient to a
+ *              local thread pool and continue listening for new client
+ *              connections.
+ *              
+ * See:         FlareClient class, FlareMediaServerAuthentificator class,
+ *              FlareMediaPlayerServerAdminInterface JSP unit.
  *
- * @author csc 668/868
+ * Usage:       This server is started by the FlareMediaPlayerServerAdminInterface.
+ *              But it requires the proper login credentials. However this can be
+ *              started by simply running it as the main method is left for testing.
  */
 public class FlareMediaPlayerServer {
 
@@ -32,17 +50,26 @@ public class FlareMediaPlayerServer {
      */
 
     /**
-     * Constructor
+     * <p>Constructor of FlareMediaPlayerServer but is to be used
+     * by a local static instance for Singleton. This initializes
+     * server configurations and a thread pool for remote clients.</p>
      */
-    public FlareMediaPlayerServer() {
+    public FlareMediaPlayerServer(){
+        
 
         configure();
         threadPool = Executors.newCachedThreadPool();
 
     }
 
+
     /**
      * Main run loop. Listen for connections here
+     * <p>Runs in an endless loop to listen for new incoming client connections.
+     * Upon successful connection, it will create a representative FlareClient
+     * and pass in a WebSocket along with a session ID. The FlareClient is then 
+     * added to a thread pool and will handle any future communication 
+     * with its respective client on its own.</p>
      */
     private void run() {
         try {
@@ -76,17 +103,21 @@ public class FlareMediaPlayerServer {
         }
     }
 
+    
     /**
-     * Left for reading configuration file later
+     * <p>Activate the configurations for the server.</p>
      */
-    public void configure() {
+    public void configure(){
+
         //Load configuration stuff here
     }
+
 
     /**
      * Adds new client to threads
      *
-     * @param client flareClient to add as thread
+     * <p>Add the FlareClient to the local thread pool in this server.</p>
+     * @param client FlareClient to be added to the local thread pool.
      */
     public void addToActiveThreads(FlareClient client) {
 
@@ -94,19 +125,24 @@ public class FlareMediaPlayerServer {
 
     }
 
+
+    
     /**
-     * Gets authorization status
-     *
-     * @return the authorization status
+     * <p>Get the authorization status of this server.</p>
+     * @return boolean - true for authorized use, false for denied access.
      */
-    public boolean getAuthStatus() {
+    public boolean getAuthStatus ()
+    {
+
         return this.auth;
     }
+
 
     /**
      * Gets singleton instance
      *
-     * @return global singleton Server
+     * <p>Retrieve the static instance of this FlareMediaPlayerServer.</p>
+     * @return FlareMediaPlayerServer static instance.
      */
     public FlareMediaPlayerServer getInstance() {
 
@@ -118,32 +154,39 @@ public class FlareMediaPlayerServer {
         return mediaServer;
     }
 
+
+
+
+    
     /**
-     * Checks if server is running on specific port
-     *
-     * @param port port to check
-     * @return true if running
+     * <p>Check if an instance of the server is already running.</p>
+     * @param port the port used for testing..
+     * @return boolean - true if the server is running, false for is not.
      */
-    public boolean isServerRunning(int port) {
+    public boolean isServerRunning (int port)
+    {
+
         boolean isRunning = true;
         try {
             serverSocket = new WebSocketServer(port);
-            isRunning = false;
             serverSocket.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+            isRunning = false;
         }
         return isRunning;
     }
 
+    
     /**
-     * Stops server from running
-     *
-     * @param port to stop on
-     * @throws IOException if cannotclose
+     * <p>Stop this instance of the server.</p>
+     * @param port integer of the port number that is being used for connections.
+     * @throws IOException if server can't stop
      */
-    public void stopServer(int port) throws IOException {
-        try {
+    public void stopServer (int port) throws IOException
+    {
+        try { 
+
             serverSocket = new WebSocketServer(port);
             serverSocket.close();
             System.out.println("Server Stopped");
@@ -153,11 +196,13 @@ public class FlareMediaPlayerServer {
 
     }
 
+    
     /**
-     * Starts the server running after authenticationg
-     *
-     * @param admin user name
-     * @param password password
+     * <p>Initialize and start the server. This will require an administrator 
+     * account name and password.</p>
+     * 
+     * @param admin string of the admin user name.
+     * @param password string of the admin password.
      */
     public void runFlareMediaPlayerServer(String admin, String password) {
 
@@ -181,10 +226,11 @@ public class FlareMediaPlayerServer {
         }
     }
 
+    
     /**
-     * Main
-     *
-     * @param args commandline arguments
+     * <p>Main method here is left for testing purposes only. During deployment
+     * the server is activated through the FlareMediaPlayerServerAdminInterface unit.</p>
+     * @param args command line args
      */
     public static void main(String[] args) {
 
