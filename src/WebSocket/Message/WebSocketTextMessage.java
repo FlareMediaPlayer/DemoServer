@@ -1,24 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package WebSocket.Message;
 
 /**
- *
- * @author mac
+ * This is a class used to send text data over the websocket protocol
+ * @author Brian Parra
+ * 
  */
 public class WebSocketTextMessage extends WebSocketMessage {
 
     public String text;
 
+    /**
+     * Sets the text received
+     * @param _text the text to send
+     */
     public void setText(String _text) {
 
         text = _text;
 
     }
 
+    /**
+     * Returns the current message text in string format
+     * @return the string of text to send
+     */
     public String getText() {
 
         return this.text;

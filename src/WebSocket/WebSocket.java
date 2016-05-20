@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package WebSocket;
-
 import WebSocket.Message.WebSocketBinaryMessage;
 import WebSocket.Message.WebSocketMessage;
 import WebSocket.Message.WebSocketTextMessage;
@@ -30,8 +24,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 
 /**
- *
- * @author mac
+ * This class handles the core websocket protocol. Most of the specifications have been implemented. Only supports data of lengths 
+ * up to 2^32 for now since underlying data structure is byte array. Can be extended to 2^64 though
+ * @author Brian Parra
  */
 public class WebSocket extends Socket {
 
@@ -53,6 +48,11 @@ public class WebSocket extends Socket {
 
     private DataInputStream dataInputStream;
 
+    /**
+     * Static Constructor
+     * @return new WebSocket
+     * @throws IOException 
+     */
     public static WebSocket create() throws IOException {
 
         WebSocket newSocket = new WebSocket();
@@ -64,12 +64,20 @@ public class WebSocket extends Socket {
 
     }
 
+    /**
+     * Default Constructor
+     * @throws IOException 
+     */
     protected WebSocket() throws IOException {
 
         super();
 
     }
 
+    /**
+     * Sets up the pointers for the input streams for reading
+     * @throws IOException 
+     */
     public void initialize() throws IOException {
 
         inputStream = this.getInputStream();
@@ -79,6 +87,11 @@ public class WebSocket extends Socket {
 
     }
     
+    /**
+     * Sends text data
+     * @param text data to send
+     * @throws IOException 
+     */
     public void sendTextData(String text) throws IOException {
         
         byte[] binaryText = text.getBytes(StandardCharsets.US_ASCII);
@@ -119,6 +132,11 @@ public class WebSocket extends Socket {
     }
     
 
+    /**
+     * Sends binary data
+     * @param data to send
+     * @throws IOException 
+     */
     public void sendBinaryData(byte[] data) throws IOException {
        
         int messageLength = data.length;
@@ -160,6 +178,11 @@ public class WebSocket extends Socket {
     }
     
 
+    /**
+     * Returns the WebSocket message
+     * @return
+     * @throws IOException 
+     */
     public WebSocketMessage getMessage() throws IOException{
         
         currentByte = dataInputStream.readByte();
@@ -189,7 +212,10 @@ public class WebSocket extends Socket {
 
     }
 
-    //For now, later make a handshake protocol
+    /**
+     * Performs the WebSocket authentication handshake
+     * @throws IOException 
+     */
     public void handshake() throws IOException {
 
         InputStream stream = getInputStream();
@@ -231,7 +257,7 @@ public class WebSocket extends Socket {
     }
 
     /**
-     * Private class for WebSocket Op Codes
+     * WebSocket op code constants
      */
     public static class OP_CODE {
 
@@ -244,6 +270,10 @@ public class WebSocket extends Socket {
 
     }
 
+    /**
+     * Initialized hash map of the op codes and corresponding processor classes
+     * @return constant hash map
+     */
     private static Map<Byte, Class> initializeTable() {
 
         Map<Byte, Class> table = new HashMap<Byte, Class>();
@@ -266,6 +296,10 @@ public class WebSocket extends Socket {
 
     }
 
+    /**
+     * Abstract class for handling WebSocket frames, these are the actual chunks of data sent
+     * @author brian parra
+     */
     public abstract class WebSocketFrameHandler {
 
         protected byte opCode;
@@ -289,10 +323,19 @@ public class WebSocket extends Socket {
 
         int maskBit;
         
+        /**
+         * Constructor
+         */
         public WebSocketFrameHandler(){
             
         }
 
+        /**
+         * Initialization for the frame handler. Sets up i/o streams
+         * @param _webSocket reference to current websocket
+         * @param _initializerByte byte with the op code
+         * @throws IOException 
+         */
         public void initialize(WebSocket _webSocket, byte _initializerByte) throws IOException {
             
             initialByte = _initializerByte;
@@ -305,13 +348,25 @@ public class WebSocket extends Socket {
             
 
         }
-
+        
+        /**
+         * Abstract method. Needed to call data processing
+         * @return WebSocketMessage that contians processed data
+         * @throws IOException 
+         */
         public abstract WebSocketMessage process() throws IOException;
 
     }
 
+    /**
+     * class that processes a continuation type frame
+     */
     public class ProcessContinuationFrame extends WebSocketFrameHandler {
-
+        
+        /**
+         * Parse the frame
+         * @return processed data
+         */
         public WebSocketMessage process() {
 
             return new WebSocketTextMessage();
@@ -319,12 +374,24 @@ public class WebSocket extends Socket {
 
     }
 
+    /**
+     * Class for processing text frame
+     * 
+     */
     public class ProcessTextFrame extends WebSocketFrameHandler {
         
+        /**
+         * Constructor
+         */
         public ProcessTextFrame(){
             super();
         }
 
+        /**
+         * Processes the data
+         * @return processed websocket message
+         * @throws IOException 
+         */
         public WebSocketMessage process() throws IOException {
             
             
@@ -361,8 +428,16 @@ public class WebSocket extends Socket {
         }
     }
 
+    /**
+     * Class for processing binary frames
+     */
     public class ProcessBinaryFrame extends WebSocketFrameHandler {
 
+        /**
+         * processes the binary frame
+         * @return websocket message
+         * @throws IOException 
+         */
         public WebSocketMessage process() throws IOException {
             
             
@@ -400,24 +475,45 @@ public class WebSocket extends Socket {
         
     }
 
+    /**
+     * Class for handling close requests
+     */
     public class ProcessCloseFrame extends WebSocketFrameHandler {
 
+        /**
+         * Processes the close request
+         * @return 
+         */
         public WebSocketMessage process() {
 
             return new WebSocketTextMessage();
         }
     }
 
+    /**
+     * Class for handling ping
+     */
     public class ProcessPingFrame extends WebSocketFrameHandler {
 
+        /**
+         * Processes ping. Should respond with a pong
+         * @return websocket message
+         */
         public WebSocketMessage process() {
 
             return new WebSocketTextMessage();
         }
     }
 
+    /**
+     * Handles a pong request
+     */
     public class ProcessPongFrame extends WebSocketFrameHandler {
 
+        /**
+         * Process pong
+         * @return websocket message with details
+         */
         public WebSocketMessage process() {
 
             return new WebSocketTextMessage();
@@ -428,7 +524,7 @@ public class WebSocket extends Socket {
      * For testing
      * @param input
      * @param position
-     * @return 
+     * @return bit position
      */
     public static int getBit(byte input, int position) {
         return (input >> position) & 1;

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package WebSocket;
 
 
@@ -11,16 +6,26 @@ import java.net.ServerSocket;
 
 
 /**
- *
- * @author mac
+ *  Extension of Server Socket to accept incoming WebSocket type connections
+ * @author Brian Parra
  */
 public class WebSocketServer extends ServerSocket {
 
-    
+    /**
+     * Constructor, just needs port number
+     * @param port active port number
+     * @throws IOException 
+     */
     public WebSocketServer(int port) throws IOException {
         super(port);
     }
 
+    /**
+     * the accept method is required to complete the websocket handshake.
+     * the handshake authentication.
+     * @return the new websocket connection after authenticating
+     * @throws IOException 
+     */
     public WebSocket accept() throws IOException {
         
         WebSocket webSocket = WebSocket.create();
