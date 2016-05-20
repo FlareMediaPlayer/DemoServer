@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package FlareTask;
 
 
@@ -11,8 +6,8 @@ import Core.FlareClient;
 import WebSocket.Message.WebSocketMessage;
 
 /**
- *
- * @author mac
+ * Abstract class for handlers for each op code
+ * @author Brian Parra
  */
 public abstract class FlareTask {
     
@@ -22,12 +17,20 @@ public abstract class FlareTask {
     
     protected FlareClient flareClient;
     
+    /**
+     * Sets the message to process
+     * @param message process this message
+     */
     public void setMessage(WebSocketMessage message){
         
         this.message = message;
  
     }
     
+    /**
+     * Reference to it's client 
+     * @param flareClient the client thread
+     */
     public void setFlareClient(FlareClient flareClient){
         
         this.flareClient = flareClient;
@@ -35,5 +38,8 @@ public abstract class FlareTask {
         
     }
     
+    /**
+     * Abstract method to process the flare message
+     */
     public abstract void process();
 }

@@ -33,11 +33,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
-
-
 /**
+ * Class for each thread to service a client
  *
- * @author josesfval
+ * @author Jose Ortiz and Brian Parra
  */
 public class FlareClient implements Runnable {
 
@@ -50,12 +49,15 @@ public class FlareClient implements Runnable {
     private boolean running = true;
     BufferedReader in;
     private Queue<FlareTask> taskeQueue;
-    
- 
-    
+
     //This is our table to look up handlers for each WebSocketMessage
     private static final Map<Byte, Class> messageTable = initializeTable();
 
+    /**
+     * Sets up table for websocket op code types
+     *
+     * @return table with processor classes
+     */
     private static Map<Byte, Class> initializeTable() {
 
         Map<Byte, Class> table = new HashMap<Byte, Class>();
@@ -78,6 +80,13 @@ public class FlareClient implements Runnable {
 
     }
 
+    /**
+     * Constructor
+     *
+     * @param sessionId used to id clients
+     * @param clientSocket socket being used
+     * @throws IOException if io cannot be established
+     */
     public FlareClient(String sessionId, WebSocket clientSocket) throws IOException {
         this.sessionId = sessionId;
         this.clientSocket = clientSocket;
@@ -86,36 +95,49 @@ public class FlareClient implements Runnable {
         outputStream = clientSocket.getOutputStream();
         dataInputStream = new DataInputStream(inputStream);
         in = new BufferedReader(new InputStreamReader(inputStream));
-        
+
         /**
          * Make an array of images
          */
-
     }
 
+    /**
+     * Get session ID
+     *
+     * @return sessionID
+     */
     public String getId() {
         return sessionId;
     }
 
-    public void sendBinaryData(byte[] data) throws IOException{
+    /**
+     * Sends binary data over websocket
+     *
+     * @param data byte array to send
+     * @throws IOException if cannot write to output
+     */
+    public void sendBinaryData(byte[] data) throws IOException {
         //System.out.println("data length is  " +  data.length);
         clientSocket.sendBinaryData(data);
-        
+
     }
-            
-            
+
+    /**
+     * Main run loop. Listen for messages here. Use opcode to initialize
+     * appropriate processor classes
+     */
     @Override
     public void run() {
 
         while (running) {
             try {
-                
+
                 WebSocketMessageHandler messageHandler = null;
                 WebSocketMessage message = clientSocket.getMessage();
                 Class messageClass = FlareClient.messageTable.get(message.getOpcode());
-                
+
                 try {
-                    
+
                     messageHandler = (FlareClient.WebSocketMessageHandler) messageClass.getConstructor(FlareClient.class).newInstance(this);
                     messageHandler.initialize(message);
                     messageHandler.process();
@@ -124,56 +146,63 @@ public class FlareClient implements Runnable {
                     Logger.getLogger(WebSocket.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                
-                
-               
-                
-
             } catch (IOException e) {
 
             }
 
         }
     }
-    
 
-    
-    
-    
-    
+    /**
+     * Abstract class for handling incoming websocket messages
+     */
     public abstract class WebSocketMessageHandler {
+
         protected WebSocketMessage message;
-        
-        
+
+        /**
+         * Process the message
+         */
         public abstract void process();
-        
-        public void initialize(WebSocketMessage _message){
+
+        /**
+         * Initializer to add the message needed
+         *
+         * @param _message message to process
+         */
+        public void initialize(WebSocketMessage _message) {
             message = _message;
         }
     }
-    
-    public class TextMessageHandler extends WebSocketMessageHandler{
-        
-        
-        //Put all logic for handling a text message in here.
-        public void process(){
+
+    /**
+     * Handles incoming text data
+     */
+    public class TextMessageHandler extends WebSocketMessageHandler {
+
+        /**
+         * Not needed for now since using binary only
+         */
+        public void process() {
             //Do Nothing, not using text 
         }
-        
+
         //END TESTING
     }
-    
+
+    /**
+     * Handles binary incoming messages
+     */
     public class BinaryMessageHandler extends WebSocketMessageHandler {
 
-        //Put all logic for handling a binary message here
+        /**
+         * Processes the binary message here
+         */
         public void process() {
-            
+
             //System.out.println();
-            byte flareOpCode = ((WebSocketBinaryMessage)message).getData()[0];
+            byte flareOpCode = ((WebSocketBinaryMessage) message).getData()[0];
             System.out.println("flare op code is + " + flareOpCode);
-            
-            
-            
 
             try {
 
@@ -191,8 +220,5 @@ public class FlareClient implements Runnable {
         }
 
     }
-    
-    
-    
 
 }

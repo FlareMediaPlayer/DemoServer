@@ -14,14 +14,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author mac
+ *  Class for holding a hash of the flare tasks
+ * @author Brian Parra
  */
 public class TaskTable {
         
     
     public static final Map<Byte, Class> taskTable = initializeTable();
 
+    /**
+     * Sets up task table
+     * @return finalized task table
+     */
     private static Map<Byte, Class> initializeTable() {
 
         Map<Byte, Class> table = new HashMap<Byte, Class>();

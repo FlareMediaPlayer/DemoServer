@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package FlareTask;
 
 import FlareMessage.AudioMessage;
@@ -23,8 +18,8 @@ import javax.imageio.ImageIO;
 
 
 /**
- *
- * @author mac
+ *  This class handles an opening video request. Currently it will also start the streaming process
+ * @author Brian Parra and Jose Ortiz
  */
 public class OpenVideoTask extends FlareTask {
 
@@ -35,6 +30,9 @@ public class OpenVideoTask extends FlareTask {
 
     private byte[] data;
 
+    /**
+     * Main method that processes the data and handles the task.
+     */
     @Override
     public void process() {
         data = ((WebSocketBinaryMessage) message).getData();
@@ -170,6 +168,10 @@ public class OpenVideoTask extends FlareTask {
 
     }
 
+    /**
+     * Checks if the video is available on server
+     * @return true if the video is available
+     */
     private boolean videoAvailable() {
 
         File fileToOpen = new File(requestID);

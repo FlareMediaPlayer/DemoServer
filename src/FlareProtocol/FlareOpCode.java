@@ -6,8 +6,8 @@
 package FlareProtocol;
 
 /**
- *
- * @author mac
+ * Class with constants for flare op codes, probably could be integrated to one single class
+ * @author Brian Parra
  */
 public class FlareOpCode {
     

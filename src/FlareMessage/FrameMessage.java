@@ -1,4 +1,3 @@
-
 package FlareMessage;
 
 import static FlareMessage.FlareMessage.HEADER_LENGTH;
@@ -17,7 +16,7 @@ import javax.imageio.ImageIO;
  * This class adds the header to the frame data and adds the entire message to a
  * byte array.
  *
- * @author Sapan
+ * @author Brian Parra And Sapan Tiwari
  */
 public class FrameMessage extends FlareMessage {
 
@@ -37,7 +36,7 @@ public class FrameMessage extends FlareMessage {
     /**
      * Sets frame to bufferedImage.
      *
-     * @param frame
+     * @param frame image to send
      */
     public void setFrame(BufferedImage frame) {
 
@@ -48,7 +47,7 @@ public class FrameMessage extends FlareMessage {
     /**
      * Sets index.
      *
-     * @param index
+     * @param index the index of the frame
      */
     public void setIndex(int index) {
         this.index = index;
@@ -58,7 +57,7 @@ public class FrameMessage extends FlareMessage {
      * It adds the header (messageLength and OpCode) to the video data, sends
      * the entire message to a byte array and returns the byte array.
      *
-     * @return
+     * @return binary array
      */
     @Override
     public byte[] toBinary() {

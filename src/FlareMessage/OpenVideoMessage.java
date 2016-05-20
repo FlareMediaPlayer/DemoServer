@@ -1,4 +1,3 @@
-
 package FlareMessage;
 
 import static FlareMessage.FlareMessage.HEADER_LENGTH;
@@ -8,7 +7,7 @@ import FlareProtocol.FlareOpCode;
  * This class adds the header to the dataLength. The header contains the
  * messageLength and OpCode. It then adds the entire message to a byte array.
  *
- * @author Sapan
+ * @author Brian Parra and Sapan Tiwari
  */
 public class OpenVideoMessage extends FlareMessage {
 
@@ -20,8 +19,8 @@ public class OpenVideoMessage extends FlareMessage {
     int frameCount;
 
     /**
-     * This method sets the video availability to default i.e. false and sets
-     * the appropriate OpCode.
+     * Constructor. This method sets the video availability to default i.e.
+     * false and sets the appropriate OpCode.
      */
     public OpenVideoMessage() {
 
@@ -33,7 +32,7 @@ public class OpenVideoMessage extends FlareMessage {
     /**
      * Sets actual video availability.
      *
-     * @param available
+     * @param available is the video available
      */
     public void setVideoAvailability(boolean available) {
 
@@ -44,7 +43,7 @@ public class OpenVideoMessage extends FlareMessage {
     /**
      * Sets video height.
      *
-     * @param height
+     * @param height the height of the video
      */
     public void setHeight(int height) {
         this.height = height;
@@ -53,7 +52,7 @@ public class OpenVideoMessage extends FlareMessage {
     /**
      * Sets video width.
      *
-     * @param width
+     * @param width width of the frames
      */
     public void setWidth(int width) {
         this.width = width;
@@ -62,7 +61,7 @@ public class OpenVideoMessage extends FlareMessage {
     /**
      * Sets video frames per second.
      *
-     * @param fps
+     * @param fps frames per second of video
      */
     public void setFps(double fps) {
         this.fps = fps;
@@ -71,7 +70,7 @@ public class OpenVideoMessage extends FlareMessage {
     /**
      * Sets video duration.
      *
-     * @param duration
+     * @param duration duration in ms
      */
     public void setDuration(double duration) {
         this.duration = duration;
@@ -80,7 +79,7 @@ public class OpenVideoMessage extends FlareMessage {
     /**
      * Sets the number of frames in the video.
      *
-     * @param frameCount
+     * @param frameCount total frame count
      */
     public void setFrameCount(int frameCount) {
         this.frameCount = frameCount;
@@ -91,7 +90,7 @@ public class OpenVideoMessage extends FlareMessage {
      * (messageLength and OpCode) to the video data and sends the entire message
      * to a byte array and returns the byte array.
      *
-     * @return
+     * @return binary array of message
      */
     @Override
     public byte[] toBinary() {
