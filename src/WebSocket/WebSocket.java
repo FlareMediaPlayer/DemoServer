@@ -180,7 +180,7 @@ public class WebSocket extends Socket {
 
     /**
      * Returns the WebSocket message
-     * @return
+     * @return the appropriate processed message
      * @throws IOException if cant read data
      */
     public WebSocketMessage getMessage() throws IOException{
@@ -520,16 +520,6 @@ public class WebSocket extends Socket {
         }
     }
     
-    /**
-     * For testing
-     * @param input
-     * @param position
-     * @return bit position
-     */
-    public static int getBit(byte input, int position) {
-        return (input >> position) & 1;
-    }
-
 
 
 }
